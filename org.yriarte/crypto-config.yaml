@@ -1,0 +1,18 @@
+# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2018 
+# License: Apache-2.0
+
+OrdererOrgs:
+  - Name: YriarteOrderer
+    Domain: yriarte.org
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: YriarteMaison
+    Domain: maison.yriarte.org
+    CA:
+       Hostname: ca
+    Specs:
+     - Hostname: teleron
+    Users:
+      Count: 0

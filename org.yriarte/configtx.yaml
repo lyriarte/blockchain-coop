@@ -1,0 +1,47 @@
+# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2018 
+# License: Apache-2.0
+
+Organizations:
+  - &YriarteOrderer
+      Name: YriarteOrderer
+      ID: YriarteOrdererMSP
+      MSPDir: crypto-config/ordererOrganizations/yriarte.org/msp
+  - &YriarteMaison
+      Name: YriarteMaison
+      ID: YriarteMaisonMSP
+      MSPDir: crypto-config/peerOrganizations/maison.yriarte.org/msp
+      AnchorPeers:
+        - Host: teleron.maison.yriarte.org
+          Port: 7051
+
+Application: &ApplicationDefaults
+    Organizations:
+
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+      - orderer.yriarte.org:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    MaxChannels: 0
+    Organizations:
+
+Profiles:
+    YriarteOrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *YriarteOrderer
+        Consortiums:
+            YriarteOrgConsortium:
+                Organizations:
+                    - *YriarteMaison
+    YriarteMaisonChannels:
+        Consortium: YriarteOrgConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *YriarteMaison
