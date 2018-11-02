@@ -76,6 +76,14 @@ peer channel join -b ${CHANNEL_NAME}.block
 ```
 
 ```
+export CHANNEL_NAME=sandbox
+export CHAINCODE=ex02
+peer chaincode install -n ${CHAINCODE} -v 1.0 -p blockchain-coop/chaincode_example02/go/
+peer chaincode instantiate -o orderer.yriarte.org:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('YriarteMaisonMSP.peer')"
+```
+
+
+```
 exit
 ```
 
