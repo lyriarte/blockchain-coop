@@ -53,8 +53,6 @@ echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/mauguio.yria
 echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/mauguio.yriarte.org/tlsca/*_sk)) >> .env
 echo ca__ADMIN=CHANGE_ME >> .env
 echo ca__PASSWD=CHANGE_ME >> .env
-echo telerondb__USERNAME=CHANGE_ME >> .env
-echo telerondb__PASSWORD=CHANGE_ME >> .env
 ```
 
 ### Start network
