@@ -8,8 +8,8 @@ OrdererOrgs:
       - Hostname: orderer
 
 PeerOrgs:
-  - Name: YriarteMaison
-    Domain: maison.yriarte.org
+  - Name: YriarteMauguio
+    Domain: mauguio.yriarte.org
     CA:
        Hostname: ca
     Specs:

@@ -34,13 +34,13 @@ export CHANNEL_NAME=sandbox
   * Channel configuration transaction 
 
 ```
-configtxgen -profile YriarteMaisonChannels -outputCreateChannelTx ./config/channel.tx -channelID $CHANNEL_NAME
+configtxgen -profile YriarteMauguioChannels -outputCreateChannelTx ./config/channel.tx -channelID $CHANNEL_NAME
 ```
 
   * Anchor peer transaction
 
 ```
-configtxgen -profile YriarteMaisonChannels -outputAnchorPeersUpdate ./config/YriarteMaisonMSPanchors.tx -channelID $CHANNEL_NAME -asOrg YriarteMaison
+configtxgen -profile YriarteMauguioChannels -outputAnchorPeersUpdate ./config/YriarteMauguioMSPanchors.tx -channelID $CHANNEL_NAME -asOrg YriarteMauguio
 ```
 
 ## Network setup
@@ -49,8 +49,8 @@ configtxgen -profile YriarteMaisonChannels -outputAnchorPeersUpdate ./config/Yri
 
 ```
 echo -n > .env
-echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/maison.yriarte.org/ca/*_sk)) >> .env
-echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/maison.yriarte.org/tlsca/*_sk)) >> .env
+echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/mauguio.yriarte.org/ca/*_sk)) >> .env
+echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/mauguio.yriarte.org/tlsca/*_sk)) >> .env
 echo ca__ADMIN=CHANGE_ME >> .env
 echo ca__PASSWD=CHANGE_ME >> .env
 echo telerondb__USERNAME=CHANGE_ME >> .env

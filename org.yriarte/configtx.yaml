@@ -6,12 +6,12 @@ Organizations:
       Name: YriarteOrderer
       ID: YriarteOrdererMSP
       MSPDir: crypto-config/ordererOrganizations/yriarte.org/msp
-  - &YriarteMaison
-      Name: YriarteMaison
-      ID: YriarteMaisonMSP
-      MSPDir: crypto-config/peerOrganizations/maison.yriarte.org/msp
+  - &YriarteMauguio
+      Name: YriarteMauguio
+      ID: YriarteMauguioMSP
+      MSPDir: crypto-config/peerOrganizations/mauguio.yriarte.org/msp
       AnchorPeers:
-        - Host: teleron.maison.yriarte.org
+        - Host: teleron.mauguio.yriarte.org
           Port: 7051
 
 Application: &ApplicationDefaults
@@ -38,10 +38,10 @@ Profiles:
         Consortiums:
             YriarteOrgConsortium:
                 Organizations:
-                    - *YriarteMaison
-    YriarteMaisonChannels:
+                    - *YriarteMauguio
+    YriarteMauguioChannels:
         Consortium: YriarteOrgConsortium
         Application:
             <<: *ApplicationDefaults
             Organizations:
-                - *YriarteMaison
+                - *YriarteMauguio
