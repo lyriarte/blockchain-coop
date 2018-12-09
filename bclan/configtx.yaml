@@ -1,0 +1,47 @@
+# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2018 
+# License: Apache-2.0
+
+Organizations:
+  - &BlockchainLANOrderer
+      Name: BlockchainLANOrderer
+      ID: BlockchainLANOrdererMSP
+      MSPDir: crypto-config/ordererOrganizations/bclan/msp
+  - &BlockchainLANCoop
+      Name: BlockchainLANCoop
+      ID: BlockchainLANCoopMSP
+      MSPDir: crypto-config/peerOrganizations/bc-coop.bclan/msp
+      AnchorPeers:
+        - Host: peer0.bc-coop.bclan
+          Port: 7051
+
+Application: &ApplicationDefaults
+    Organizations:
+
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+      - orderer.bclan:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    MaxChannels: 0
+    Organizations:
+
+Profiles:
+    BlockchainLANOrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *BlockchainLANOrderer
+        Consortiums:
+            BlockchainLANOrgConsortium:
+                Organizations:
+                    - *BlockchainLANCoop
+    BlockchainLANCoopChannels:
+        Consortium: BlockchainLANOrgConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *BlockchainLANCoop

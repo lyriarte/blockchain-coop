@@ -1,0 +1,18 @@
+# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2018 
+# License: Apache-2.0
+
+OrdererOrgs:
+  - Name: BlockchainLANOrderer
+    Domain: bclan
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: BlockchainLANCoop
+    Domain: bc-coop.bclan
+    CA:
+       Hostname: ca
+    Template:
+      Count: 1
+    Users:
+      Count: 0
