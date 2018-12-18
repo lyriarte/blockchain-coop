@@ -90,21 +90,21 @@ peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["query","b"
 
 ```
 export CHAINCODE=ssm
-export VERSION=4fedf2a
+export VERSION=38a3aa0
 peer chaincode install -n ${CHAINCODE} -v ${VERSION} -p blockchain-coop/ssm/
 ```
 
 ```
 export CHANNEL_NAME=sandbox
 export CHAINCODE=ssm
-export VERSION=4fedf2a
+export VERSION=38a3aa0
 peer chaincode instantiate -o orderer.bclan:7050 --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -C ${CHANNEL_NAME} -n ${CHAINCODE} -v ${VERSION} -c '{"Args":["init","[{\"name\": \"lyr-xps13\",\"pub\":\"AAAAB3NzaC1yc2EAAAADAQABAAABAQDDXm+Oy0Kq/GTwJnBBNp9BOA8neEoRSb1YV6V6oPbPSoHOmLQP00t6IuFy04lPY/KibkBv2G3x7OTZfT6NgXQ79Xg9gSRqPBB/ZQP4pPi1ifGBsM2v3Qe8DPQ6yrwcVdzr9a9iVXRhQvMPLBZydYKYA1ZpV6dTr3oXunuBXov/HmwxR5M8TQ21znHOUbO6AiWiXgsMC0E5pWjoLWhIzVMeOCmags4FvLmTIaCwRPmW8bOt7IVXWdVO3l4mS5v/M5zOSpf2s0gpdkkOtEy/nUFn6hBT7tIeVV9XI62wNB4YjivkF/Giw+czjZwa6V+d/PzLHtsuzuBEmdPeO9FfYnkb\"}]"]}' -P "OR ('BlockchainLANCoopMSP.member')"
 ```
 
 ```
 export CHANNEL_NAME=sandbox
 export CHAINCODE=ssm
-export VERSION=4fedf2a
+export VERSION=38a3aa0
 
 peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["register", "{\"name\": \"John Doe\", \"pub\": \"XXXAAA\"}", "lyr-xps13", "XYZ"]}'
 peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["register", "{\"name\": \"Joe Black\", \"pub\": \"YYYBBB\"}", "lyr-xps13", "XYZ"]}'
