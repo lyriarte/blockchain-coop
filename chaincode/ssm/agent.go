@@ -47,12 +47,7 @@ func (self *Agent) Serialize() ([]byte, error) {
 }
 
 func (self *Agent) Deserialize(data []byte) error {
-	err := json.Unmarshal(data, &self.AgentModel)
-	if (err != nil) {
-		return err
-	}
-	_, err = self.PublicKey()
-	return err
+	return json.Unmarshal(data, &self.AgentModel)
 }
 
 //
@@ -60,8 +55,18 @@ func (self *Agent) Deserialize(data []byte) error {
 //
 
 func (self *Agent) PublicKey() (crypto.PublicKey, error) {
-
-	block, _ := pem.Decode([]byte(self.AgentModel.Pub))
+	// PEM from base 64
+	pemStr := "-----BEGIN PUBLIC KEY-----\n"
+	i := 0;
+	for i < len(self.AgentModel.Pub)-64 {
+		pemStr += self.AgentModel.Pub[i:i+64] + "\n"
+		i += 64
+	}
+	pemStr += self.AgentModel.Pub[i:len(self.AgentModel.Pub)] + "\n"
+	pemStr += "-----END PUBLIC KEY-----\n"
+	
+	// Public Key from PEM
+	block, _ := pem.Decode([]byte(pemStr))
 	if block == nil {
 		return nil, errors.New("Invalid agent PEM block")
 	}
