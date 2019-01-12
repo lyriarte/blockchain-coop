@@ -120,8 +120,8 @@ peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["user", "Sa
 peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["ssm", "Car dealership"]}'
 peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["session", "deal20181201"]}'
 
-peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["perform", "Sell", "deal20181201", "Sam", "ABC"]}'
-peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["perform", "Buy", "deal20181201", "Bob", "EFG"]}'
+peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["perform", "Sell", "deal20181201", "Sam", "c5tjK9MPBgdSXjoNm+FqWbSCO0BcytmfFPTe4V0JM4tsddCuzm/y8Q2uTF8B2DOgpF9981BXKjfd4zpjZCdGrXuBpwzGc3sJikp2+0U1xpJ098QkguV1G8RZ8JzmpgIUCbEb/KNa+KVRHLDY+t8OLjMH5YiQPZg9kq71oqxd4tioF/+Icwp/zFqPZiTmRFZ7F9hPaOEY4/8sCGvsrkW4yYcEOQ1Dr9pGifG9qIjMnrS3ADSv5hvFmC+NhxGfZWla7K4KG0BXMm/btIx/ImgpPmPZtJC/kd+K3soiHSKivYU2y00fuZMO4hB5IUFLSbSKY+LE1ZEEO+Hx1Txl9qVWRw=="]}'
+peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["perform", "Buy", "deal20181201", "Bob", "mjGSe1evDZcuOMnldKkClDisEFLNlddEXam95wRSQdQIGTujyYuv6lfa0ANjRxXW8/zLwAOYPAUXeD6BnTv60svQiH5d+s1Fgy9wFWLYfDdCJtkk2SVeEp+8Y9KR11JXSSdrb5IfrKWi/oyDe1om4uH8jtylwx6qzvYEZaeMRmK/vRoTRIZwxZL4pP2gwI071BVFZLCmnQbEAzcuTbJL5MwQuuIUFQ6eyLmlh0vb+tdxO5E9KqTQ7yWKBpgC2VddVGn/5R7U/nwopfuH1ZeuSsknlCIyaSmZW59wJmyP86jXKX5cgG99VTJ4KELH7yD9dXD3OTPNaeIaTsCK9hZeYg=="]}'
 ```
 
 ```
