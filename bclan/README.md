@@ -90,39 +90,38 @@ peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["query","b"
 
 ```
 export CHAINCODE=ssm
-export VERSION=53b6d3d
+export VERSION=22dd1e4
 peer chaincode install -n ${CHAINCODE} -v ${VERSION} -p blockchain-coop/ssm/
 ```
 
 ```
 export CHANNEL_NAME=sandbox
 export CHAINCODE=ssm
-export VERSION=53b6d3d
-peer chaincode instantiate -o orderer.bclan:7050 --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -C ${CHANNEL_NAME} -n ${CHAINCODE} -v ${VERSION} -c '{"Args":["init","[{\"name\": \"lyr-xps13\",\"pub\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxR0XhIzP0S9WTx7giz0iXqMhuwrjiai7GX8esPKuKMKQuGej5xTpKrfAf6/RtVRNPV3PQy92NqGXk+35nQVnGJU/GEpq86SnRrWWxVSqQR5Nh87DxbR3eoAwcKLFymsixJoWvpm/DU5Ut+Iuqy4Zla2zM5gS62/xlv03VJWVBPFN99pBybPWw0WnRbpnGFIpgDtyMjaE4U48Lmq8wesQ6c2RSXSE/HC76DOhmNKAbgkBnpMxvgW1AGUCJfB4KfutOkLb0OOHIRUeJv+FySwIeXyMh2o3xUQCHWKxSN3Rawg1aJBy2wj1jR9yUAwraLIUzguTaLDUvVH/4eKRGSryzwIDAQAB\"}]"]}' -P "OR ('BlockchainLANCoopMSP.member')"
+export VERSION=22dd1e4
+peer chaincode instantiate -o orderer.bclan:7050 --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -C ${CHANNEL_NAME} -n ${CHAINCODE} -v ${VERSION} -c '{"Args":["init","[{\"name\": \"Adam\",\"pub\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3MO+2nIRi/cs4WbE+ykzA1ErTfs0QmBIdpZoAsU7YVMKBnBNulxhy2BI93QHK9uQreLhANBDexagMZg9ZzCxtKLi9UNHSm08099znPfMKn2cITHI8ShyZC7OogsbNmqrY0iy01r4IVpPi4CMNhLTCWyLGWS+L0hsmZOQQWV5BeER4nufBgGmA8plD14T/AXaHF7pMJAGlvauqjcjhb9YAoDUjSmdy4h3KzNq0c1KSQwORgQhgGItUxs5X8jvAXsikRDs7OkqbEDWpSf5z6FSyenvPmnplrqL/5bjiis6ObbOA+BjpMpyuouXOA3WuGv61a5Wrx62bcfeCx9471EKFQIDAQAB\"}]"]}' -P "OR ('BlockchainLANCoopMSP.member')"
 ```
 
 ```
-peer chaincode upgrade -o orderer.bclan:7050 --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -C ${CHANNEL_NAME} -n ${CHAINCODE} -v ${VERSION} -c '{"Args":["init","[{\"name\": \"lyr-xps13\",\"pub\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxR0XhIzP0S9WTx7giz0iXqMhuwrjiai7GX8esPKuKMKQuGej5xTpKrfAf6/RtVRNPV3PQy92NqGXk+35nQVnGJU/GEpq86SnRrWWxVSqQR5Nh87DxbR3eoAwcKLFymsixJoWvpm/DU5Ut+Iuqy4Zla2zM5gS62/xlv03VJWVBPFN99pBybPWw0WnRbpnGFIpgDtyMjaE4U48Lmq8wesQ6c2RSXSE/HC76DOhmNKAbgkBnpMxvgW1AGUCJfB4KfutOkLb0OOHIRUeJv+FySwIeXyMh2o3xUQCHWKxSN3Rawg1aJBy2wj1jR9yUAwraLIUzguTaLDUvVH/4eKRGSryzwIDAQAB\"}]"]}' -P "OR ('BlockchainLANCoopMSP.member')"
+peer chaincode upgrade -o orderer.bclan:7050 --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -C ${CHANNEL_NAME} -n ${CHAINCODE} -v ${VERSION} -c '{"Args":["init","[{\"name\": \"Adam\",\"pub\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3MO+2nIRi/cs4WbE+ykzA1ErTfs0QmBIdpZoAsU7YVMKBnBNulxhy2BI93QHK9uQreLhANBDexagMZg9ZzCxtKLi9UNHSm08099znPfMKn2cITHI8ShyZC7OogsbNmqrY0iy01r4IVpPi4CMNhLTCWyLGWS+L0hsmZOQQWV5BeER4nufBgGmA8plD14T/AXaHF7pMJAGlvauqjcjhb9YAoDUjSmdy4h3KzNq0c1KSQwORgQhgGItUxs5X8jvAXsikRDs7OkqbEDWpSf5z6FSyenvPmnplrqL/5bjiis6ObbOA+BjpMpyuouXOA3WuGv61a5Wrx62bcfeCx9471EKFQIDAQAB\"}]"]}' -P "OR ('BlockchainLANCoopMSP.member')"
 ```
 
 ```
 export CHANNEL_NAME=sandbox
 export CHAINCODE=ssm
-export VERSION=53b6d3d
+export VERSION=22dd1e4
+peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["register", "{\"name\":\"Bob\",\"pub\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4v2ZYVhQaG7HdhCsrFKlxG1kWLrApCgb2tUjdXLjc4WVG12ZC2eW1b5WZZnsGmS46eCDZyxZsJTxTbKjlKb8FcWWfs0tEixL08gqBKUH9+FD8GaEdtiaOdQJ+yehUBZ5VEty9OrLUMW5L3Ftr9kGmbbtAMRkyRXTT6KEXemm3xRpX/Z2FQzmFmcucbArjyu/LvzlDHJwCiQEQS3R9UCGnjYLZEBYqj7tEEP5cnsm5egwe/EWXx9rvZH9HK3AYVgraE69qZ+FhWkErIqHWmctgPbBYBPXKCfBMzf4INMA4+c5gaCygz4RRFcr10OjGCAS/IiKaLl0X7ehbt6yrYyxEwIDAQAB\"}", "Adam", "GotPEetQ34tbVodiGw3prtYWYjf06mMJX5j4X6n8m+KbMYQt0GMRtmVo88jRbXqD71IRlgPfe6dnNZ0dZRIZSUGAk57Y6fuADC0vwDciEg2+IXEc/F4vrMAEh3KXPMwb3MskRA+K1IO91szwcrrn3Y74odrBzmSypTjO60GmPAJybJ9r/5ynafDZFM5wmzgNNecJ51Yz8nltHPhhMOzDIE7pETvrlK58XnarySl81WMgR9GIO64A+WixsEsyURCiYQwWVf9XKAM6a9bDvm8h5fUvfrfktmruz8CB/qJgBLD60WD3qvSCPoN8BgCzI+QgAebyqNejNPbWSP7Z18JpxQ=="]}'
+peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["register", "{\"name\":\"Sam\",\"pub\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp6IgdpSmqt6UdZU1ZL4UY3Biog3iOkYiDAkDJTKNzaWVM8vYgrBn8out3xJ7QoFmAVjyvgLiFq4+y5vG4aRRfRuTRuzDJN1a4LT21QbGGmBppx/F+rSU1wLv+zg1U/uNu1XvxojrgAIzF3+2GmkEn8w1LqREhaY+h5VPgaixzIIcDotTp8FbdcFFAXwpEUBbwTvpqq91AdzpoYRjYQMWBkgEuNms6eXnzalSw0L3rNet7GbDPS5USUXFc4qm1VWQ3yGU6ur+4T0tsn9WPbEraG6ddIs0y1MOonxl0h97Stk14XXVkwI1vRWTK1C8HMHdu9WUB9uNj95IfL6EVNV8fQIDAQAB\"}", "Adam", "SJ/naOMctg3X6MbbatkU4SOwTG+P8BbW6Ggxm0ItMd6+KAlQSMVixTCiOBpoU7FuiENxPZtiuk2jz5cE+mngFSMqurgAUpN03bfBxmv6TD8OhyAakXENXQRhquBLz2GW4AUJGCkrL8IcrSft27Takxls9ObkinOdjaWdzY6D7q1mTiuXVdr9ekXB9TjEtLeLaY+fbSPX8AO0TkADUl3FC60sX8UBaCU/7CbBjsCvKSZ/eAsh5JK2D+/MLoNJL1RRkn2+ChkVeKI9Hw+niFQBMJO/+F8hLgnyO4xBFkUTjDpg2IlLAkSPdHzXj0sgSHmugCGSIEOW/3lFFtqD3VPFRQ=="]}'
+peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["create", "{\"name\": \"Car dealership\", \"transitions\": [{\"from\": 0, \"to\": 1, \"role\": \"Seller\", \"action\": \"Sell\"}, {\"from\": 1, \"to\": 2, \"role\": \"Buyer\", \"action\": \"Buy\"}]}", "Adam", "rrPpaH88z7CcTSGXsizSGAquwT2jBVW253ICAzQfF/wy28i/XOHC1FwQAWejYOLdHhHijzbZyPSbruB9dLx/n4UEXGc74BV35nYTiFHpdUNUouPW9yu9CoAGBlDV9XMeUQyZHd3YdOMN/+15r7FM8wPCry6H//eL5D/R5a3AXywrKGGFwU5XQGc9BjX1kgza/X2NvNp9XfxXTi3cnlcgKImM2fjGphRYbUSmEXNvszSce/lIMfdvCaR2ZDOhWzLDzkhLaD9BpBTyGsC5JoH56kVUuG5skKS8W6YYKL5uMHvaM5JjDs159uHIITVomUXRfbgTSjqYyjsaw0fh0B8pKQ=="]}'
+peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["start","{\"ssm\": \"Car dealership\", \"session\": \"deal20181201\", \"current\": 0, \"public\": \"Car dealer 2018 public\", \"private\": {\"Bob\": \"XXX\",\"Sam\": \"YYY\"}, \"roles\": {\"Buyer\": \"Bob\", \"Seller\": \"Sam\"}}", "Adam", "W4hOWGFalDISWCSRYIlfNnvr0ToS5RhLByxHZJorjnOzHDn0GNDstOaQmsQF924+uNEqZDaRirTanAQhVJhtOR2IRfCawWNYuYGIw4k3MjMlXnY5BM6f4btioTY3OQt5Ewg9vjq9BenMlrZtwMCTTinp8s3gbd46i3b0rrSoLFFbVQ6oZfe5WO7i/eUyxNcT3+BfQmoKovMFOH7d5lhZgj9ZiO6aCysAeHYxy+9TNsltUORObbMgqHbRH5f/pLktJAf+nl5tn7NDB0vV4772z9pOhjsHNm+1/MFhxx2//yHat0ypi4xjU3sM9TLcF+Npjh65IySYxU8qPfpbOGkqBQ=="]}' 
 
-peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["register", "{\"name\": \"John Doe\", \"pub\": \"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzIhnIdLp2lcuvdVaFw22o8GFZdnkixm2s9VcCfa/v2IFvk73gGNP7euFnVY125vq1lHtd2mzFflixDj8F54ru9bGUOew1GaMBgYly09shYSk/SjkjyDDKLK8baWeWGU2OyiqV+zkLEJi++06xBO5ihUwrgdUFU8iGq7QdqH8DwVU3TFs5Y6EMRBIh4CkD1Vmbxb7r1704G574suErAbHcOQF6jLD37AGashuiUcrIt9Cm7+06fm72j9xlYA+CxbQnkPeOqU77zXq5AVH9XMf0qGAIfj+/3YDz1rhnM0SBzKfk3UHNp41k1aVUIKc/JBWYvgcl4ve8upLf7miLyZCawIDAQAB\"}", "lyr-xps13", "XYZ"]}'
-peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["register", "{\"name\": \"Joe Black\", \"pub\": \"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2EvY4JUtnI68BOdsc/Q4WrRt0rh5ab6qKWAYkPIny6YCgggi69Z3Y5H+SY3OO/YcEk3g8d0EEx71vPxcq5FFaPc7VlmsI79I4m2YBB5mRzps72K23nf0Htwb7klJRoDTdmv/fjeOYhrQJHTzcymUBUZJKCxcclu+NY3EPjWl0t9+I1XF46gaLABwPlZJydPRhRzeVuJWv/IycxRS7iVjt8kJnicFQcvwPW9sIz+WTyIWrnOi+l6yjg8ImeRu7UvYErMHexlhYwZFeUULTtSwIQKrngL59PKNh7u1n+oAcpAhv2cnVxrLE7859p+mlDOzGhZwzCtNNaTDJ1+DA+uMgwIDAQAB\"}", "lyr-xps13", "XYZ"]}'
-peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["create", "{\"name\": \"Car dealership\", \"transitions\": [{\"from\": 0, \"to\": 1, \"role\": \"Seller\", \"action\": \"Sell\"}, {\"from\": 1, \"to\": 2, \"role\": \"Buyer\", \"action\": \"Buy\"}]}", "lyr-xps13", "XYZ"]}'
-peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["start","{\"ssm\": \"Car dealership\", \"session\": \"deal20181201\", \"current\": 0, \"public\": \"Car dealer 2018 public\", \"private\": {\"John Doe\": \"XXX\",\"Joe Black\": \"YYY\"}, \"roles\": {\"Buyer\": \"John Doe\", \"Seller\": \"Joe Black\"}}", "lyr-xps13", "XYZ"]}' 
-
-peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["admin", "lyr-xps13"]}'
-peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["user", "John Doe"]}'
-peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["user", "Joe Black"]}'
+peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["admin", "Adam"]}'
+peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["user", "Bob"]}'
+peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["user", "Sam"]}'
 peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["ssm", "Car dealership"]}'
 peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["session", "deal20181201"]}'
 
-peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["perform", "Sell", "deal20181201", "Joe Black", "ABC"]}'
-peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["perform", "Buy", "deal20181201", "John Doe", "EFG"]}'
+peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["perform", "Sell", "deal20181201", "Sam", "ABC"]}'
+peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["perform", "Buy", "deal20181201", "Bob", "EFG"]}'
 ```
 
 ```

@@ -9,6 +9,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"encoding/json"
 
@@ -81,6 +82,10 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		if len(args) != 3 {
 			return shim.Error(errmsg)
 		}
+		err = self.Verify(stub, args, "ADMIN")
+		if (err != nil) {
+			return shim.Error(err.Error())
+		}
 		return self.Register(stub, args)
 	}
 
@@ -88,6 +93,10 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	if function == "create" {
 		if len(args) != 3 {
 			return shim.Error(errmsg)
+		}
+		err = self.Verify(stub, args, "ADMIN")
+		if (err != nil) {
+			return shim.Error(err.Error())
 		}
 		return self.Create(stub, args)
 	}
@@ -97,6 +106,10 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		if len(args) != 3 {
 			return shim.Error(errmsg)
 		}
+		err = self.Verify(stub, args, "ADMIN")
+		if (err != nil) {
+			return shim.Error(err.Error())
+		}
 		return self.Start(stub, args)
 	}
 	
@@ -104,6 +117,10 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	if function == "perform" {
 		if len(args) != 4 {
 			return shim.Error(errmsg)
+		}
+		err = self.Verify(stub, args, "USER")
+		if (err != nil) {
+			return shim.Error(err.Error())
 		}
 		return self.Perform(stub, args)
 	}
@@ -150,14 +167,8 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 // "register", user:Agent, admin_name:string, signature:b64	
 func (self *SSMChaincode) Register(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var admin Agent
+	var err error	
 	var user Agent
-	// Get validating admin
-	err := admin.Get(stub, "ADMIN_" + args[1])
-	if (err != nil) {
-		return shim.Error(err.Error())
-	}
-	// TODO Validate admin signature on user JSON string
 	// Create user from JSON string
 	err = user.Deserialize([]byte(args[0]))
 	if (err != nil) {
@@ -179,14 +190,8 @@ func (self *SSMChaincode) Register(stub shim.ChaincodeStubInterface, args []stri
 
 // "create", ssm:SigningStateMachine, admin_name:string, signature:b64
 func (self *SSMChaincode) Create(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var admin Agent
+	var err error	
 	var ssm SigningStateMachine
-	// Get validating admin
-	err := admin.Get(stub, "ADMIN_" + args[1])
-	if (err != nil) {
-		return shim.Error(err.Error())
-	}
-	// TODO Validate admin signature on ssm JSON string
 	// Create ssm from JSON string
 	err = ssm.Deserialize([]byte(args[0]))
 	if (err != nil) {
@@ -203,14 +208,8 @@ func (self *SSMChaincode) Create(stub shim.ChaincodeStubInterface, args []string
 
 // "start", init:State, admin_name:string, signature:b64
 func (self *SSMChaincode) Start(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var admin Agent
+	var err error	
 	var state State
-	// Get validating admin
-	err := admin.Get(stub, "ADMIN_" + args[1])
-	if (err != nil) {
-		return shim.Error(err.Error())
-	}
-	// TODO Validate admin signature on state JSON string
 	// Create state from JSON string
 	err = state.Deserialize([]byte(args[0]))
 	if (err != nil) {
@@ -227,14 +226,8 @@ func (self *SSMChaincode) Start(stub shim.ChaincodeStubInterface, args []string)
 
 // "perform", action:string, context:State, user_name:string, signature:b64
 func (self *SSMChaincode) Perform(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var user Agent
+	var err error	
 	var state State
-	// Get validating user
-	err := user.Get(stub, "USER_" + args[2])
-	if (err != nil) {
-		return shim.Error(err.Error())
-	}
-	// TODO Validate user signature on state JSON string
 	// Create state from JSON string
 	err = state.Get(stub, "STATE_" + args[1])
 	if (err != nil) {
@@ -245,6 +238,33 @@ func (self *SSMChaincode) Perform(stub shim.ChaincodeStubInterface, args []strin
 }
 
 
+
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+//
+// utilities
+//
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+
+// agent signature verification
+func (self *SSMChaincode) Verify(stub shim.ChaincodeStubInterface, args []string, agentType string) error {
+	// Need at least 3 args: message, verifier, signature
+	argCount := len(args)
+	if argCount < 3 {
+		return errors.New("Incorrect arg count. Expecting 3 or more")
+	}
+	// Verifier agent type is either "USER" or "ADMIN"
+	var verifier Agent
+	err :=  verifier.Get(stub, agentType + "_" + args[argCount - 2])
+	if (err != nil) {
+		return err
+	}
+	// message to verify is args 0 to n-3
+	message := args[0]
+	for i := 1; i < argCount-2; i++ {
+		message += args[i]
+	}
+	return verifier.Verify(message, args[argCount - 1])
+}	
 
 
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----

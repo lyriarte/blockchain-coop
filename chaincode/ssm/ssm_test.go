@@ -25,7 +25,7 @@ func TestAgent(test *testing.T) {
 	var agent Agent
 
 	fmt.Println("---- ---- ---- ---- Deserialize")
-	strAgent := "{\"name\": \"John Doe\", \"pub\": \"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxR0XhIzP0S9WTx7giz0iXqMhuwrjiai7GX8esPKuKMKQuGej5xTpKrfAf6/RtVRNPV3PQy92NqGXk+35nQVnGJU/GEpq86SnRrWWxVSqQR5Nh87DxbR3eoAwcKLFymsixJoWvpm/DU5Ut+Iuqy4Zla2zM5gS62/xlv03VJWVBPFN99pBybPWw0WnRbpnGFIpgDtyMjaE4U48Lmq8wesQ6c2RSXSE/HC76DOhmNKAbgkBnpMxvgW1AGUCJfB4KfutOkLb0OOHIRUeJv+FySwIeXyMh2o3xUQCHWKxSN3Rawg1aJBy2wj1jR9yUAwraLIUzguTaLDUvVH/4eKRGSryzwIDAQAB\"}"
+	strAgent :=  "{\"name\":\"Adam\",\"pub\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3MO+2nIRi/cs4WbE+ykzA1ErTfs0QmBIdpZoAsU7YVMKBnBNulxhy2BI93QHK9uQreLhANBDexagMZg9ZzCxtKLi9UNHSm08099znPfMKn2cITHI8ShyZC7OogsbNmqrY0iy01r4IVpPi4CMNhLTCWyLGWS+L0hsmZOQQWV5BeER4nufBgGmA8plD14T/AXaHF7pMJAGlvauqjcjhb9YAoDUjSmdy4h3KzNq0c1KSQwORgQhgGItUxs5X8jvAXsikRDs7OkqbEDWpSf5z6FSyenvPmnplrqL/5bjiis6ObbOA+BjpMpyuouXOA3WuGv61a5Wrx62bcfeCx9471EKFQIDAQAB\"}"
 	err = agent.Deserialize([]byte(strAgent))
 	if err != nil {
 		test.Fatal(err)
@@ -47,6 +47,14 @@ func TestAgent(test *testing.T) {
 	}
 	if pubKey == nil {
 		test.Fatal("pubKey")
+	}
+	
+	fmt.Println("---- ---- ---- ---- Verify")
+	message := "{\"name\":\"Bob\",\"pub\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4v2ZYVhQaG7HdhCsrFKlxG1kWLrApCgb2tUjdXLjc4WVG12ZC2eW1b5WZZnsGmS46eCDZyxZsJTxTbKjlKb8FcWWfs0tEixL08gqBKUH9+FD8GaEdtiaOdQJ+yehUBZ5VEty9OrLUMW5L3Ftr9kGmbbtAMRkyRXTT6KEXemm3xRpX/Z2FQzmFmcucbArjyu/LvzlDHJwCiQEQS3R9UCGnjYLZEBYqj7tEEP5cnsm5egwe/EWXx9rvZH9HK3AYVgraE69qZ+FhWkErIqHWmctgPbBYBPXKCfBMzf4INMA4+c5gaCygz4RRFcr10OjGCAS/IiKaLl0X7ehbt6yrYyxEwIDAQAB\"}"
+	b64sign := "GotPEetQ34tbVodiGw3prtYWYjf06mMJX5j4X6n8m+KbMYQt0GMRtmVo88jRbXqD71IRlgPfe6dnNZ0dZRIZSUGAk57Y6fuADC0vwDciEg2+IXEc/F4vrMAEh3KXPMwb3MskRA+K1IO91szwcrrn3Y74odrBzmSypTjO60GmPAJybJ9r/5ynafDZFM5wmzgNNecJ51Yz8nltHPhhMOzDIE7pETvrlK58XnarySl81WMgR9GIO64A+WixsEsyURCiYQwWVf9XKAM6a9bDvm8h5fUvfrfktmruz8CB/qJgBLD60WD3qvSCPoN8BgCzI+QgAebyqNejNPbWSP7Z18JpxQ=="
+	err = agent.Verify(message, b64sign)
+	if err != nil {
+		test.Fatal(err)
 	}
 	
 	fmt.Println("---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ")
