@@ -1,0 +1,18 @@
+# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2019
+# License: Apache-2.0
+
+OrdererOrgs:
+  - Name: ThingagoraBC0Orderer
+    Domain: or-bc0.thingagora.org
+    Specs:
+      - Hostname: orderer0
+
+PeerOrgs:
+  - Name: ThingagoraBC0Peer
+    Domain: pr-bc0.thingagora.org
+    CA:
+       Hostname: ca
+    Template:
+      Count: 1
+    Users:
+      Count: 1

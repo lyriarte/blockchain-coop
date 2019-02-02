@@ -1,0 +1,111 @@
+# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2018 
+# License: Apache-2.0
+
+version: '2'
+
+networks:
+  bc0net:
+
+services:
+  ca.pr-bc0.thingagora.org:
+    container_name: ca_ThingagoraBC0Peer
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/ca/ca.pr-bc0.thingagora.org-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/ca/${ca_ThingagoraBC0Peer__CA_KEYFILE}
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/tlsca/tlsca.pr-bc0.thingagora.org-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/tlsca/${ca_ThingagoraBC0Peer__TLS_KEYFILE}
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start -b ${ca_ThingagoraBC0Peer__ADMIN}:${ca_ThingagoraBC0Peer__PASSWD} -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/ca/:/etc/hyperledger/ca/
+      - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/tlsca/:/etc/hyperledger/tlsca/
+    networks:
+      - bc0net
+
+  orderer0.or-bc0.thingagora.org:
+    container_name: orderer0_ThingagoraBC0Orderer
+    image: hyperledger/fabric-orderer
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=info
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/config/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=ThingagoraBC0OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+    command: orderer
+    ports:
+      - 7050:7050
+    volumes:
+        - ./config/:/etc/hyperledger/config
+        - ./crypto-config/ordererOrganizations/or-bc0.thingagora.org/orderers/orderer0.or-bc0.thingagora.org/msp/:/etc/hyperledger/msp
+        - ./crypto-config/ordererOrganizations/or-bc0.thingagora.org/orderers/orderer0.or-bc0.thingagora.org/tls/:/etc/hyperledger/tls
+    networks:
+      - bc0net
+
+  peer0.pr-bc0.thingagora.org:
+    container_name: peer0_ThingagoraBC0Peer
+    image: hyperledger/fabric-peer
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_bc0net
+      - CORE_PEER_ID=peer0.pr-bc0.thingagora.org
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=info
+      - CORE_PEER_LOCALMSPID=ThingagoraBC0PeerMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/
+      - CORE_PEER_ADDRESS=peer0.pr-bc0.thingagora.org:7051
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 7051:7051
+      - 7053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer0.pr-bc0.thingagora.org/msp:/etc/hyperledger/msp/
+        - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer0.pr-bc0.thingagora.org/tls:/etc/hyperledger/tls/
+    networks:
+      - bc0net
+
+  cli-peer0.pr-bc0.thingagora.org:
+    container_name: cli-peer0_ThingagoraBC0Peer
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=debug
+      - CORE_PEER_ID=cli-peer0.pr-bc0.thingagora.org
+      - CORE_PEER_ADDRESS=peer0.pr-bc0.thingagora.org:7051
+      - CORE_PEER_LOCALMSPID=ThingagoraBC0PeerMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/admin/msp/
+      - CORE_CHAINCODE_KEEPALIVE=10
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/admin/tls/client.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/admin/tls/client.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/admin/tls/ca.crt
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/blockchain-coop/
+        - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/users/Admin@pr-bc0.thingagora.org/:/etc/hyperledger/admin/
+        - ./crypto-config/ordererOrganizations/or-bc0.thingagora.org/tlsca/:/etc/hyperledger/orderer/
+        - ./config/:/etc/hyperledger/config/
+    networks:
+        - bc0net
+
