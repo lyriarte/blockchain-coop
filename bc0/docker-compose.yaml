@@ -14,13 +14,13 @@ services:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/ca/ca.pr-bc0.thingagora.org-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/ca/${ca_ThingagoraBC0Peer__CA_KEYFILE}
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/ca/${ca__CA_KEYFILE}
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/tlsca/tlsca.pr-bc0.thingagora.org-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/tlsca/${ca_ThingagoraBC0Peer__TLS_KEYFILE}
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/tlsca/${ca__TLS_KEYFILE}
     ports:
       - "7054:7054"
-    command: sh -c 'fabric-ca-server start -b ${ca_ThingagoraBC0Peer__ADMIN}:${ca_ThingagoraBC0Peer__PASSWD} -d'
+    command: sh -c 'fabric-ca-server start -b ${ca__ADMIN}:${ca__PASSWD} -d'
     volumes:
       - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/ca/:/etc/hyperledger/ca/
       - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/tlsca/:/etc/hyperledger/tlsca/

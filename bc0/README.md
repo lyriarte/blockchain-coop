@@ -46,17 +46,70 @@ configtxgen -profile BlockchainCoopBC0PeerChannels -outputCreateChannelTx ./conf
 configtxgen -profile BlockchainCoopBC0PeerChannels -outputAnchorPeersUpdate ./config/BlockchainCoopBC0PeerMSPanchors.tx -channelID ${CHANNEL_NAME} -asOrg ThingagoraBC0Peer
 ```
 
-## Network setup
+## Initial deployment
 
 ### Docker containers environment
 
 ```
+export ORGA=pr-bc0.thingagora.org
+
 echo COMPOSE_PROJECT_NAME="bc0" > .env
-echo ca_ThingagoraBC0Peer__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc0.thingagora.org/ca/*_sk)) >> .env
-echo ca_ThingagoraBC0Peer__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc0.thingagora.org/tlsca/*_sk)) >> .env
-echo ca_ThingagoraBC0Peer__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
-echo ca_ThingagoraBC0Peer__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/ca/*_sk)) >> .env
+echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/tlsca/*_sk)) >> .env
+echo ca__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo ca__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 ```
+
+Note that the `.env` file contains the CA admin and password, remove it from remote hosts and keep the credentials safe.
+
+### Remote hosts setup
+
+Run the following commands as root to create the blockchain user.
+
+```
+apt-get install docker.io docker-compose
+adduser blockchain
+adduser blockchain docker
+```
+
+### Create archives for remote hosts
+
+```
+orderer-archive.sh orderer0 or-bc0.thingagora.org
+scp orderer_orderer0_or-bc0.thingagora.org.tgz blockchain@orderer0.or-bc0.thingagora.org:
+```
+
+```
+ca-archive.sh pr-bc0.thingagora.org
+scp ca_pr-bc0.thingagora.org.tgz blockchain@ca.pr-bc0.thingagora.org:
+```
+
+```
+peer-archive.sh peer0 pr-bc0.thingagora.org
+scp peer_peer0_pr-bc0.thingagora.org.tgz blockchain@peer0.pr-bc0.thingagora.org:
+```
+
+### Start containers on remote hosts
+
+```
+ssh blockchain@orderer0.or-bc0.thingagora.org
+tar xvzf orderer_orderer0_or-bc0.thingagora.org.tgz
+docker-compose -f docker-compose.yaml up -d orderer0.or-bc0.thingagora.org
+```
+
+```
+ssh blockchain@ca.pr-bc0.thingagora.org
+tar xvzf ca_pr-bc0.thingagora.org.tgz
+docker-compose -f docker-compose.yaml up -d ca.pr-bc0.thingagora.org
+```
+
+```
+ssh blockchain@peer0.pr-bc0.thingagora.org
+tar xvzf peer_peer0_pr-bc0.thingagora.org.tgz
+docker-compose -f docker-compose.yaml up -d peer0.pr-bc0.thingagora.org
+```
+
+## Network setup on a local machine
 
 ### Start network
 
