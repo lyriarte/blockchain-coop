@@ -14,7 +14,6 @@ Blockchain sandbox bc0 for cooperating organizations:
 cryptogen generate --config=./crypto-config.yaml
 ```
 
-
 ### Artefacts
 
 ```
@@ -26,7 +25,7 @@ export FABRIC_CFG_PATH=$PWD
   * Orderer genesis block
 
 ```
-configtxgen -profile ThingagoraBC0OrdererGenesis -outputBlock ./config/genesis.block
+configtxgen -profile ThingagoraBC0OrdererGenesis  -channelID bczero -outputBlock ./config/genesis.block
 ```
 
 #### Channels
@@ -38,13 +37,13 @@ export CHANNEL_NAME=sandbox
   * Channel configuration transaction 
 
 ```
-configtxgen -profile BlockchainCoopBC0PeerChannels -outputCreateChannelTx ./config/channel.tx -channelID $CHANNEL_NAME
+configtxgen -profile BlockchainCoopBC0PeerChannels -outputCreateChannelTx ./config/${CHANNEL_NAME}.tx -channelID $CHANNEL_NAME
 ```
 
   * Anchor peer transaction
 
 ```
-configtxgen -profile BlockchainCoopBC0PeerChannels -outputAnchorPeersUpdate ./config/BlockchainCoopBC0PeerMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ThingagoraBC0Peer
+configtxgen -profile BlockchainCoopBC0PeerChannels -outputAnchorPeersUpdate ./config/BlockchainCoopBC0PeerMSPanchors.tx -channelID ${CHANNEL_NAME} -asOrg ThingagoraBC0Peer
 ```
 
 ## Network setup
@@ -55,8 +54,8 @@ configtxgen -profile BlockchainCoopBC0PeerChannels -outputAnchorPeersUpdate ./co
 echo COMPOSE_PROJECT_NAME="bc0" > .env
 echo ca_ThingagoraBC0Peer__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc0.thingagora.org/ca/*_sk)) >> .env
 echo ca_ThingagoraBC0Peer__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc0.thingagora.org/tlsca/*_sk)) >> .env
-echo ca_ThingagoraBC0Peer__ADMIN=CHANGE_ME >> .env
-echo ca_ThingagoraBC0Peer__PASSWD=CHANGE_ME >> .env
+echo ca_ThingagoraBC0Peer__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo ca_ThingagoraBC0Peer__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 ```
 
 ### Start network
@@ -73,7 +72,7 @@ docker exec -it cli-peer0_ThingagoraBC0Peer /bin/bash
 
 ```
 export CHANNEL_NAME=sandbox
-peer channel create -o orderer0.or-bc0.thingagora.org:7050 -c ${CHANNEL_NAME} -f /etc/hyperledger/config/channel.tx --tls --cafile /etc/hyperledger/orderer/tlsca.or-bc0.thingagora.org-cert.pem
+peer channel create -o orderer0.or-bc0.thingagora.org:7050 -c ${CHANNEL_NAME} -f /etc/hyperledger/config/${CHANNEL_NAME}.tx --tls --cafile /etc/hyperledger/orderer/tlsca.or-bc0.thingagora.org-cert.pem
 peer channel join -b ${CHANNEL_NAME}.block
 ```
 

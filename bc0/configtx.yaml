@@ -6,16 +6,31 @@ Organizations:
       Name: ThingagoraBC0Orderer
       ID: ThingagoraBC0OrdererMSP
       MSPDir: crypto-config/ordererOrganizations/or-bc0.thingagora.org/msp
+      Policies: &BlockchainCoopDefaults
+        Readers:
+          Type: ImplicitMeta
+          Rule: "ANY Readers"
+        Writers:
+          Type: ImplicitMeta
+          Rule: "ANY Writers"
+        Admins:
+          Type: ImplicitMeta
+          Rule: "MAJORITY Admins"
+        BlockValidation:
+          Type: ImplicitMeta
+          Rule: "ANY Writers"
   - &ThingagoraBC0Peer
       Name: ThingagoraBC0Peer
       ID: ThingagoraBC0PeerMSP
       MSPDir: crypto-config/peerOrganizations/pr-bc0.thingagora.org/msp
+      Policies: *BlockchainCoopDefaults
       AnchorPeers:
         - Host: peer0.pr-bc0.thingagora.org
           Port: 7051
 
 Application: &ApplicationDefaults
     Organizations:
+    Policies: *BlockchainCoopDefaults
 
 Orderer: &OrdererDefaults
     OrdererType: solo
@@ -28,6 +43,7 @@ Orderer: &OrdererDefaults
         PreferredMaxBytes: 512 KB
     MaxChannels: 0
     Organizations:
+    Policies: *BlockchainCoopDefaults
 
 Profiles:
     ThingagoraBC0OrdererGenesis:
@@ -39,6 +55,7 @@ Profiles:
             BlockchainCoopBC0Consortium:
                 Organizations:
                     - *ThingagoraBC0Peer
+
     BlockchainCoopBC0PeerChannels:
         Consortium: BlockchainCoopBC0Consortium
         Application:
