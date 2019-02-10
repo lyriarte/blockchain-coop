@@ -80,8 +80,8 @@ services:
     networks:
       - bc0net
 
-  cli-peer0.pr-bc0.thingagora.org:
-    container_name: cli-peer0_ThingagoraBC0Peer
+  cli.pr-bc0.thingagora.org:
+    container_name: cli-ThingagoraBC0Peer
     image: hyperledger/fabric-tools
     tty: true
     environment:
@@ -89,21 +89,22 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - FABRIC_LOGGING_SPEC=info
       - CORE_CHAINCODE_LOGGING_LEVEL=info
-      - CORE_PEER_ID=cli-peer0.pr-bc0.thingagora.org
-      - CORE_PEER_ADDRESS=peer0.pr-bc0.thingagora.org:7051
+      - CORE_PEER_ID=cli.${cli_ORGA}
+      - CORE_PEER_ADDRESS=peer0.${cli_ORGA}:7051
       - CORE_PEER_LOCALMSPID=ThingagoraBC0PeerMSP
-      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/admin/msp/
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/user/msp/
       - CORE_CHAINCODE_KEEPALIVE=10
       - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/admin/tls/client.key
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/admin/tls/client.crt
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/admin/tls/ca.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/user/tls/client.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/user/tls/client.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/user/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
         - /var/run/:/host/var/run/
         - ./../chaincode/:/opt/gopath/src/blockchain-coop/
-        - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/users/Admin@pr-bc0.thingagora.org/:/etc/hyperledger/admin/
+        - ./../util/:/opt/blockchain-coop/
+        - ./crypto-config/peerOrganizations/${cli_ORGA}/users/${cli_USER}@${cli_ORGA}/:/etc/hyperledger/user/
         - ./crypto-config/ordererOrganizations/or-bc0.thingagora.org/tlsca/:/etc/hyperledger/orderer/
         - ./config/:/etc/hyperledger/config/
     networks:

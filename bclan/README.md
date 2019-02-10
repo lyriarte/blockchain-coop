@@ -27,19 +27,19 @@ configtxgen -profile BlockchainLANOrdererGenesis -outputBlock ./config/genesis.b
 #### Channels
 
 ```
-export CHANNEL_NAME=sandbox
+export CHANNEL=sandbox
 ```
 
   * Channel configuration transaction 
 
 ```
-configtxgen -profile BlockchainLANCoopChannels -outputCreateChannelTx ./config/channel.tx -channelID $CHANNEL_NAME
+configtxgen -profile BlockchainLANCoopChannels -outputCreateChannelTx ./config/${CHANNEL}.tx -channelID $CHANNEL
 ```
 
   * Anchor peer transaction
 
 ```
-configtxgen -profile BlockchainLANCoopChannels -outputAnchorPeersUpdate ./config/BlockchainLANCoopMSPanchors.tx -channelID $CHANNEL_NAME -asOrg BlockchainLANCoop
+configtxgen -profile BlockchainLANCoopChannels -outputAnchorPeersUpdate ./config/BlockchainLANCoopMSPanchors.tx -channelID $CHANNEL -asOrg BlockchainLANCoop
 ```
 
 ## Network setup
@@ -54,6 +54,9 @@ echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/ca/*
 echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/tlsca/*_sk)) >> .env
 echo ca__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 echo ca__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+
+echo cli_ORGA=${ORGA} >> .env
+echo cli_USER=Admin >> .env
 ```
 
 ### Start network
@@ -64,29 +67,48 @@ docker-compose -f docker-compose.yaml up -d
 
 ### Use the CLI container environment
 
+
+  * Runtime CLI configuration
+
 ```
-docker exec -it cli-peer0 /bin/bash
+cli_ORGA=bc-coop.bclan
+echo cli_ORGA=${cli_ORGA} > ../util/env
+
+# orderer address and certificate
+echo ORDERER_ADDR="orderer.bclan:7050" >> ../util/env
+echo ORDERER_CERT="/etc/hyperledger/orderer/tlsca.bclan-cert.pem" >> ../util/env
+
+# current session chaincode
+echo CHANNEL="sandbox" >> ../util/env
+echo CHAINCODE="ex02" >> ../util/env
+
+# override target peer if needed
+echo CORE_PEER_ADDRESS="peer0.${cli_ORGA}:7051" >> ../util/env
+
+# Enter CLI environment
+docker exec -it cli-bclan /bin/bash
 ```
 
 ```
-export CHANNEL_NAME=sandbox
-peer channel create -o orderer.bclan:7050 -c ${CHANNEL_NAME} -f /etc/hyperledger/config/channel.tx --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem
-peer channel join -b ${CHANNEL_NAME}.block
+# Channel creation in CLI environment
+source /opt/blockchain-coop/env
+peer channel create -o ${ORDERER_ADDR} -c ${CHANNEL} -f /etc/hyperledger/config/${CHANNEL}.tx --tls --cafile ${ORDERER_CERT}
+peer channel join -b ${CHANNEL}.block
 ```
 
 ```
-export CHANNEL_NAME=sandbox
-export CHAINCODE=ex02
+# Chaincode intantiation in CLI environment
+source /opt/blockchain-coop/env
 peer chaincode install -n ${CHAINCODE} -v 1.0 -p blockchain-coop/chaincode_example02/go/
-peer chaincode instantiate -o orderer.bclan:7050 --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -C ${CHANNEL_NAME} -n ${CHAINCODE} -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('BlockchainLANCoopMSP.member')"
+peer chaincode instantiate -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CERT} -C ${CHANNEL} -n ${CHAINCODE} -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('BlockchainLANCoopMSP.member')"
 ```
 
 ```
-export CHANNEL_NAME=sandbox
-export CHAINCODE=ex02
-peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["query","a"]}'
-peer chaincode invoke -o orderer.bclan:7050 -C ${CHANNEL_NAME} -n ${CHAINCODE} --tls --cafile /etc/hyperledger/orderer/tlsca.bclan-cert.pem -c '{"Args":["invoke","a","b","10"]}'
-peer chaincode query -C ${CHANNEL_NAME} -n ${CHAINCODE} -c '{"Args":["query","b"]}'
+# Chaincode usage in CLI environment
+source /opt/blockchain-coop/env
+peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["query","a"]}'
+peer chaincode invoke -o ${ORDERER_ADDR} -C ${CHANNEL} -n ${CHAINCODE} --tls --cafile ${ORDERER_CERT} -c '{"Args":["invoke","a","b","10"]}'
+peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["query","b"]}'
 ```
 
 ```
