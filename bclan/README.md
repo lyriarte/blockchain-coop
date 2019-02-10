@@ -10,7 +10,6 @@
 cryptogen generate --config=./crypto-config.yaml
 ```
 
-
 ### Artefacts
 
 ```
@@ -48,11 +47,13 @@ configtxgen -profile BlockchainLANCoopChannels -outputAnchorPeersUpdate ./config
 ### Docker containers environment
 
 ```
+export ORGA=bc-coop.bclan
+
 echo COMPOSE_PROJECT_NAME="bclan" > .env
-echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/bc-coop.bclan/ca/*_sk)) >> .env
-echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/bc-coop.bclan/tlsca/*_sk)) >> .env
-echo ca__ADMIN=CHANGE_ME >> .env
-echo ca__PASSWD=CHANGE_ME >> .env
+echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/ca/*_sk)) >> .env
+echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/tlsca/*_sk)) >> .env
+echo ca__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo ca__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 ```
 
 ### Start network
