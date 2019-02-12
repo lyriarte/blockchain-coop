@@ -112,6 +112,12 @@ tar xvzf peer_peer0_pr-bc0.thingagora.org.tgz
 docker-compose -f docker-compose.yaml up -d peer0.pr-bc0.thingagora.org
 ```
 
+### Start CLI container locally
+
+```
+docker-compose -f docker-compose.yaml up -d cli.pr-bc0.thingagora.org
+```
+
 ## Network setup on a local machine
 
 ### Start network
