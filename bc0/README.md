@@ -160,7 +160,7 @@ peer channel join -b ${CHANNEL}.block
 ```
 # Chaincode intantiation in CLI environment
 source /opt/blockchain-coop/env
-peer chaincode install -n ${CHAINCODE} -v 1.0 -p blockchain-coop/chaincode_example02/go/
+peer chaincode install -n ${CHAINCODE} -v 1.0 -p blockchain-coop/go/chaincode_example02/
 peer chaincode instantiate -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CERT} -C ${CHANNEL} -n ${CHAINCODE} -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('ThingagoraBC0PeerMSP.member')"
 ```
 
