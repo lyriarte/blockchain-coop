@@ -13,6 +13,6 @@ PeerOrgs:
     CA:
        Hostname: ca
     Template:
-      Count: 1
+      Count: 2
     Users:
       Count: 1

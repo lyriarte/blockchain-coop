@@ -120,10 +120,10 @@ docker-compose -f docker-compose.yaml up -d cli.pr-bc0.thingagora.org
 
 ## Network setup on a local machine
 
-### Start network
+### Start network locally with only one peer 
 
 ```
-docker-compose -f docker-compose.yaml up -d
+docker-compose -f docker-compose.yaml up -d ca.pr-bc0.thingagora.org orderer0.or-bc0.thingagora.org peer0.pr-bc0.thingagora.org cli.pr-bc0.thingagora.org
 ```
 
 ### Use the CLI container environment
@@ -186,5 +186,54 @@ docker-compose -f docker-compose.yaml down
 git clean -fdx
 ```
 
+### Upgrade network
 
+  * Update crypto for peer1.pr-bc0.thingagora.org
 
+```
+cryptogen extend --input=crypto-config --config=crypto-config.yaml
+```
+
+  * Package peer1.pr-bc0.thingagora.org
+
+```
+peer-archive.sh peer1 pr-bc0.thingagora.org
+scp peer_peer1_pr-bc0.thingagora.org.tgz blockchain@peer1.pr-bc0.thingagora.org:
+```
+
+  * Start container on remote host
+
+```
+ssh blockchain@peer1.pr-bc0.thingagora.org
+tar xvzf peer_peer1_pr-bc0.thingagora.org.tgz
+docker-compose -f docker-compose.yaml up -d peer1.pr-bc0.thingagora.org
+```
+
+  * Runtime CLI configuration
+
+```
+# override target peer
+echo CORE_PEER_ADDRESS="peer1.${cli_ORGA}:7051" >> ../util/env
+```
+
+  * Join existing channels
+
+```
+# Enter CLI environment
+docker exec -it cli-ThingagoraBC0Peer /bin/bash
+source /opt/blockchain-coop/env
+# Retrieve channel configuration from another peer
+CORE_PEER_ADDRESS="peer0.${cli_ORGA}:7051"
+peer channel fetch config ${CHANNEL}.block --channelID ${CHANNEL} -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CERT}
+# New peer now joins the channel
+CORE_PEER_ADDRESS="peer1.${cli_ORGA}:7051"
+peer channel join -b ${CHANNEL}.block
+```
+
+  * Install and run chaincode
+
+```
+peer chaincode install -n ${CHAINCODE} -v 1.0 -p blockchain-coop/go/chaincode_example02/
+# Chaincode is already instantiated, a query will spawn it on the new peer
+peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["query","a"]}'
+```
