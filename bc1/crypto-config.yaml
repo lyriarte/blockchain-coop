@@ -1,0 +1,18 @@
+# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2019
+# License: Apache-2.0
+
+OrdererOrgs:
+  - Name: ChainOpsBC1Orderer
+    Domain: or-bc1.chain-ops.net
+    Specs:
+      - Hostname: orderer0
+
+PeerOrgs:
+  - Name: ChainOpsBC1Peer
+    Domain: pr-bc1.chain-ops.net
+    CA:
+       Hostname: ca
+    Template:
+      Count: 2
+    Users:
+      Count: 1

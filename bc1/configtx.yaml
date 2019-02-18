@@ -1,0 +1,48 @@
+# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2019
+# License: Apache-2.0
+
+Organizations:
+  - &ChainOpsBC1Orderer
+      Name: ChainOpsBC1Orderer
+      ID: ChainOpsBC1OrdererMSP
+      MSPDir: crypto-config/ordererOrganizations/or-bc1.chain-ops.net/msp
+  - &ChainOpsBC1Peer
+      Name: ChainOpsBC1Peer
+      ID: ChainOpsBC1PeerMSP
+      MSPDir: crypto-config/peerOrganizations/pr-bc1.chain-ops.net/msp
+      AnchorPeers:
+        - Host: peer0.pr-bc1.chain-ops.net
+          Port: 7051
+
+Application: &ApplicationDefaults
+    Organizations:
+
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+      - orderer0.or-bc1.chain-ops.net:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    MaxChannels: 0
+    Organizations:
+
+Profiles:
+    ChainOpsBC1OrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *ChainOpsBC1Orderer
+        Consortiums:
+            BlockchainCoopBC1Consortium:
+                Organizations:
+                    - *ChainOpsBC1Peer
+
+    BlockchainCoopBC1PeerChannels:
+        Consortium: BlockchainCoopBC1Consortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *ChainOpsBC1Peer
