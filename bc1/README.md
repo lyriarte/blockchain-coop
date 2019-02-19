@@ -61,12 +61,8 @@ export MSP=ChainOpsBC1PeerMSP
 export ORGA=pr-bc1.chain-ops.net
 
 echo COMPOSE_PROJECT_NAME="bc1" > .env
-echo ca_1_CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc1.chain-ops.net/ca/*_sk)) >> .env
-echo ca_1_TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc1.chain-ops.net/tlsca/*_sk)) >> .env
-echo ca_2_CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/ca/*_sk)) >> .env
-echo ca_2_TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/tlsca/*_sk)) >> .env
-echo ca_3_CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc1.thingagora.org/ca/*_sk)) >> .env
-echo ca_3_TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/pr-bc1.thingagora.org/tlsca/*_sk)) >> .env
+echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/ca/*_sk)) >> .env
+echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/tlsca/*_sk)) >> .env
 echo ca__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 echo ca__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 
@@ -77,15 +73,95 @@ echo cli_USER=Admin >> .env
 
 Note that the `.env` file contains the CA admin and password, remove it from remote hosts and keep the credentials safe.
 
+```
+# Backup the .env file for this organization
+cp .env env_${MSP}
+```
 
+### Remote hosts setup
+
+Run the following commands as root to create the blockchain user.
+
+```
+apt-get install docker.io docker-compose
+adduser blockchain
+adduser blockchain docker
+```
+
+### Create archives for remote hosts
+
+```
+orderer-archive.sh orderer0 or-bc1.chain-ops.net
+scp orderer_orderer0_or-bc1.chain-ops.net.tgz blockchain@orderer0.or-bc1.chain-ops.net:
+```
+
+Peer organisations: pr-bc1.chain-ops.net , pr-bc1.civis-blockchain.org , pr-bc1.thingagora.org
+
+```
+export ORGA=pr-bc1.chain-ops.net
+```
+
+```
+echo ORGA=${ORGA} > env
+ca-archive.sh ${ORGA}
+scp ca_${ORGA}.tgz blockchain@ca.${ORGA}:
+scp env blockchain@ca.${ORGA}:
+```
+
+Peer indexes starting from 0
+
+```
+idx=0
+```
+
+```
+echo ORGA=${ORGA} > env
+echo idx=${idx} >> env
+peer-archive.sh peer${idx} ${ORGA}
+scp peer_peer${idx}_${ORGA}.tgz blockchain@peer${idx}.${ORGA}:
+scp env blockchain@peer${idx}.${ORGA}:
+```
+
+### Archive users
+
+```
+user-archive.sh Admin ${ORGA} or-bc1.chain-ops.net
+user-archive.sh User1 ${ORGA}
+mv user_User1_${ORGA}.tgz reader_User1_${ORGA}.tgz
+user-archive.sh User1 ${ORGA} or-bc1.chain-ops.net
+```
+
+### Start containers on remote hosts
+
+```
+ssh blockchain@orderer0.or-bc1.chain-ops.net
+tar xvzf orderer_orderer0_or-bc1.chain-ops.net.tgz
+docker-compose -f docker-compose.yaml up -d orderer0.or-bc1.chain-ops.net
+```
+
+```
+ssh blockchain@ca.${ORGA}
+source env
+tar xvzf ca_${ORGA}.tgz
+docker-compose -f docker-compose.yaml up -d ca.${ORGA}
+rm env .env docker-compose.yaml ca_${ORGA}.tgz
+```
+
+```
+ssh blockchain@peer${idx}.${ORGA}
+source env
+tar xvzf peer_peer${idx}_${ORGA}.tgz
+docker-compose -f docker-compose.yaml up -d peer${idx}.${ORGA}
+rm env .env docker-compose.yaml peer_peer${idx}_${ORGA}.tgz
+```
+
+### Start CLI container locally
+
+```
+docker-compose -f docker-compose.yaml up -d cli.or-bc1.chain-ops.net
+```
 
 ## Network setup on a local machine
-
-### Start network locally with only one peer per org
-
-```
-docker-compose -f docker-compose.yaml up -d
-```
 
 ### Use the CLI container environment
 
