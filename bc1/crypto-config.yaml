@@ -16,3 +16,20 @@ PeerOrgs:
       Count: 2
     Users:
       Count: 1
+  - Name: CivisBlockchainBC1Peer
+    Domain: pr-bc1.civis-blockchain.org
+    CA:
+       Hostname: ca
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+  - Name: ThingagoraBC1Peer
+    Domain: pr-bc1.thingagora.org
+    CA:
+       Hostname: ca
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+

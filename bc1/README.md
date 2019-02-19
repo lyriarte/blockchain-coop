@@ -44,8 +44,12 @@ configtxgen -profile BlockchainCoopBC1PeerChannels -outputCreateChannelTx ./conf
 
   * Anchor peer transaction
 
+Peer MSP ids: ChainOpsBC1Peer , CivisBlockchainBC1Peer , ThingagoraBC1Peer
+
 ```
-configtxgen -profile BlockchainCoopBC1PeerChannels -outputAnchorPeersUpdate ./config/BlockchainCoopBC1PeerMSPanchors.tx -channelID ${CHANNEL} -asOrg ChainOpsBC1Peer
+configtxgen -profile BlockchainCoopBC1PeerChannels -outputAnchorPeersUpdate ./config/ChainOpsBC1PeerMSPanchors.tx -channelID ${CHANNEL} -asOrg ChainOpsBC1Peer
+configtxgen -profile BlockchainCoopBC1PeerChannels -outputAnchorPeersUpdate ./config/CivisBlockchainBC1PeerMSPanchors.tx -channelID ${CHANNEL} -asOrg CivisBlockchainBC1Peer
+configtxgen -profile BlockchainCoopBC1PeerChannels -outputAnchorPeersUpdate ./config/ThingagoraBC1PeerMSPanchors.tx -channelID ${CHANNEL} -asOrg ThingagoraBC1Peer
 ```
 
 ## Initial deployment

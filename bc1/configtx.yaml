@@ -13,6 +13,20 @@ Organizations:
       AnchorPeers:
         - Host: peer0.pr-bc1.chain-ops.net
           Port: 7051
+  - &CivisBlockchainBC1Peer
+      Name: CivisBlockchainBC1Peer
+      ID: CivisBlockchainBC1PeerMSP
+      MSPDir: crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/msp
+      AnchorPeers:
+        - Host: peer0.pr-bc1.civis-blockchain.org
+          Port: 7051
+  - &ThingagoraBC1Peer
+      Name: ThingagoraBC1Peer
+      ID: ThingagoraBC1PeerMSP
+      MSPDir: crypto-config/peerOrganizations/pr-bc1.thingagora.org/msp
+      AnchorPeers:
+        - Host: peer0.pr-bc1.thingagora.org
+          Port: 7051
 
 Capabilities:
     Channel: &ChannelCapabilities
@@ -111,6 +125,12 @@ Profiles:
                     - <<: *ChainOpsBC1Peer
                       Policies:
                           <<: *ApplicationDefaultPolicies
+                    - <<: *CivisBlockchainBC1Peer
+                      Policies:
+                          <<: *ApplicationDefaultPolicies
+                    - <<: *ThingagoraBC1Peer
+                      Policies:
+                          <<: *ApplicationDefaultPolicies
 
     BlockchainCoopBC1PeerChannels:
         <<: *ChannelDefaults
@@ -119,6 +139,12 @@ Profiles:
             <<: *ApplicationDefaults
             Organizations:
                 - <<: *ChainOpsBC1Peer
+                  Policies:
+                      <<: *ApplicationDefaultPolicies
+                - <<: *CivisBlockchainBC1Peer
+                  Policies:
+                      <<: *ApplicationDefaultPolicies
+                - <<: *ThingagoraBC1Peer
                   Policies:
                       <<: *ApplicationDefaultPolicies
 
