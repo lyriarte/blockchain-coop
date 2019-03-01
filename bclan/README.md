@@ -115,6 +115,36 @@ peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["query","b"]}'
 exit
 ```
 
+
+### Use the node.js SDK
+
+```
+export PATH=../sdk/node:$PATH
+source .env
+```
+
+  * Enroll the bclan admin
+
+```
+enroll.js $ca__ADMIN $ca__PASSWD bclan
+check-enrollment.js $ca__ADMIN
+query.js $ca__ADMIN peer0:bclan sandbox ex02 query a
+invoke.js $ca__ADMIN peer0:bclan sandbox ex02 invoke a b 1
+query.js $ca__ADMIN peer0:bclan sandbox ex02 query a
+```
+
+  * Register and enroll a new user
+
+```
+register.js $ca__ADMIN $ca__PASSWD bclan Fred ABCD1234
+enroll.js Fred ABCD1234 bclan
+check-enrollment.js Fred
+query.js Fred peer0:bclan sandbox ex02 query b
+invoke.js Fred peer0:bclan sandbox ex02 invoke a b 50
+query.js Fred peer0:bclan sandbox ex02 query b
+```
+
+
 ### Stop network and cleanup
 
 ```
@@ -124,6 +154,4 @@ docker-compose -f docker-compose.yaml down
 ```
 git clean -fdx
 ```
-
-
 

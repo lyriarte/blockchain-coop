@@ -1,0 +1,23 @@
+{
+	"network": {
+		"orderer": {
+			"url": "grpcs://127.0.0.1:7050",
+			"server-hostname": "orderer.bclan",
+			"tls_cacerts": "crypto-config/ordererOrganizations/bclan/orderers/orderer.bclan/msp/tlscacerts/tlsca.bclan-cert.pem"
+		},
+		"bclan": {
+			"name": "BlockchainLANCoop",
+			"mspid": "BlockchainLANCoopMSP",
+			"ca": {
+				"url": "https://127.0.0.1:7054",
+				"name": "ca"
+			},
+			"peer0": {
+				"requests": "grpcs://127.0.0.1:7051",
+				"events": "grpcs://127.0.0.1:7053",
+				"server-hostname": "peer0.bc-coop.bclan",
+				"tls_cacerts": "crypto-config/peerOrganizations/bc-coop.bclan/peers/peer0.bc-coop.bclan/msp/tlscacerts/tlsca.bc-coop.bclan-cert.pem"
+			}
+		}
+	}
+}
