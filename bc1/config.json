@@ -1,0 +1,69 @@
+{
+	"network": {
+		"orderer": {
+			"url": "grpcs://orderer0.or-bc1.chain-ops.net:7050",
+			"server-hostname": "orderer0",
+			"tls_cacerts": "crypto-config/ordererOrganizations/or-bc1.chain-ops.net/orderers/orderer0.or-bc1.chain-ops.net/msp/tlscacerts/tlsca.or-bc1.chain-ops.net-cert.pem"
+		},
+		"ChainOps": {
+			"name": "ChainOpsBC0Peer",
+			"mspid": "ChainOpsBC0PeerMSP",
+			"ca": {
+				"url": "https://ca.pr-bc1.chain-ops.net:7054",
+				"name": "ca"
+			},
+			"peer0": {
+				"requests": "grpcs://peer0.pr-bc1.chain-ops.net:7051",
+				"events": "grpcs://peer0.pr-bc1.chain-ops.net:7053",
+				"server-hostname": "peer0.pr-bc1.chain-ops.net",
+				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc1.chain-ops.net/peers/peer0.pr-bc1.chain-ops.net/msp/tlscacerts/tlsca.pr-bc1.chain-ops.net-cert.pem"
+			},
+			"peer1": {
+				"requests": "grpcs://peer1.pr-bc1.chain-ops.net:7051",
+				"events": "grpcs://peer1.pr-bc1.chain-ops.net:7053",
+				"server-hostname": "peer1.pr-bc1.chain-ops.net",
+				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc1.chain-ops.net/peers/peer1.pr-bc1.chain-ops.net/msp/tlscacerts/tlsca.pr-bc1.chain-ops.net-cert.pem"
+			}
+		},
+		"CivisBlockchain": {
+			"name": "CivisBlockchainBC0Peer",
+			"mspid": "CivisBlockchainBC0PeerMSP",
+			"ca": {
+				"url": "https://ca.pr-bc1.civis-blockchain.org:7054",
+				"name": "ca"
+			},
+			"peer0": {
+				"requests": "grpcs://peer0.pr-bc1.civis-blockchain.org:7051",
+				"events": "grpcs://peer0.pr-bc1.civis-blockchain.org:7053",
+				"server-hostname": "peer0.pr-bc1.civis-blockchain.org",
+				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer0.pr-bc1.civis-blockchain.org/msp/tlscacerts/tlsca.pr-bc1.civis-blockchain.org-cert.pem"
+			},
+			"peer1": {
+				"requests": "grpcs://peer1.pr-bc1.civis-blockchain.org:7051",
+				"events": "grpcs://peer1.pr-bc1.civis-blockchain.org:7053",
+				"server-hostname": "peer1.pr-bc1.civis-blockchain.org",
+				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer1.pr-bc1.civis-blockchain.org/msp/tlscacerts/tlsca.pr-bc1.civis-blockchain.org-cert.pem"
+			}
+		},
+		"Thingagora": {
+			"name": "ThingagoraBC0Peer",
+			"mspid": "ThingagoraBC0PeerMSP",
+			"ca": {
+				"url": "https://ca.pr-bc1.thingagora.org:7054",
+				"name": "ca"
+			},
+			"peer0": {
+				"requests": "grpcs://peer0.pr-bc1.thingagora.org:7051",
+				"events": "grpcs://peer0.pr-bc1.thingagora.org:7053",
+				"server-hostname": "peer0.pr-bc1.thingagora.org",
+				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc1.thingagora.org/peers/peer0.pr-bc1.thingagora.org/msp/tlscacerts/tlsca.pr-bc1.thingagora.org-cert.pem"
+			},
+			"peer1": {
+				"requests": "grpcs://peer1.pr-bc1.thingagora.org:7051",
+				"events": "grpcs://peer1.pr-bc1.thingagora.org:7053",
+				"server-hostname": "peer1.pr-bc1.thingagora.org",
+				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc1.thingagora.org/peers/peer1.pr-bc1.thingagora.org/msp/tlscacerts/tlsca.pr-bc1.thingagora.org-cert.pem"
+			}
+		}
+	}
+}
