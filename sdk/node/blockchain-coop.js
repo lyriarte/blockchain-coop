@@ -40,6 +40,8 @@ BlockchainCoop.prototype.perform = function(command, context, onOk, onError) {
 		cbctx = this.check(context.user, cbctx);
 	else if (command == "enroll")
 		cbctx = this.enroll(context.user, context.password, context.org, cbctx);
+	else if (command == "register")
+		cbctx = this.register(context.user, context.password, context.org, context.newuser, context.newpass, cbctx);
 
 	return cbctx;
 };
@@ -121,6 +123,52 @@ BlockchainCoop.prototype.enroll = function(user, password, org, cbctx) {
 	cbctx.onError
 	).then(function() {
 		cbctx.onOk(hfcUser);
+	},
+	cbctx.onError);
+
+	return cbctx;
+};
+
+
+/**
+ * User registration
+ * 
+ * @param user {string} - The user name.
+ * @param password {string} - The user password.
+ * @param org {string} - The organization.
+ * @param newuser {string} - The new user name.
+ * @param newpass {string} - The new user password.
+ * @param cbctx {object} - Object in the context of which the callbacks are executed.
+ * @return {object} cbctx - The context object.
+ */
+
+BlockchainCoop.prototype.register = function(user, password, org, newuser, newpass, cbctx) {
+	var self = this;
+	var hfcUser = new self.User(user);
+	var hfcOrg = self.ORGS[org];
+	var req = {
+		enrollmentID: user,
+		enrollmentSecret: password
+	};
+	var	tlsOptions = {
+		trustedRoots: [],
+		verify: false
+	};
+	var caService = new self.FabricCAServices(hfcOrg.ca.url, tlsOptions, hfcOrg.ca.name);
+	caService.enroll(req)
+// Enroll the user
+	.then(function(enrollment) {
+		return hfcUser.setEnrollment(enrollment.key, enrollment.certificate, hfcOrg.mspid);
+	},
+	cbctx.onError
+// Register new user
+	).then(function() {
+		return caService.register({enrollmentID: newuser, enrollmentSecret: newpass, affiliation: 'org1.department1', role: 'client'}, hfcUser);
+	},
+	cbctx.onError
+// Verify new user password
+	).then(function(newpass) {
+		cbctx.onOk({user: newuser, password: newpass});
 	},
 	cbctx.onError);
 
