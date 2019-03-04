@@ -5,6 +5,7 @@
  * @param config {string} - Hyperledger fabric client config file.
  */
 var BlockchainCoop = function(config) {
+	this.fs = require('fs');
 	this.hfc = require('fabric-client');
 	this.FabricCAServices = require('fabric-ca-client/lib/FabricCAServices.js');
 	this.User = require('fabric-ca-client/lib/User.js');
@@ -42,6 +43,8 @@ BlockchainCoop.prototype.perform = function(command, context, onOk, onError) {
 		cbctx = this.enroll(context.user, context.password, context.org, cbctx);
 	else if (command == "register")
 		cbctx = this.register(context.user, context.password, context.org, context.newuser, context.newpass, cbctx);
+	else if (command == "query")
+		cbctx = this.query(context.user, context.peer, context.org, context.channel, context.ccid, context.fcn, context.args, cbctx);
 
 	return cbctx;
 };
@@ -174,4 +177,83 @@ BlockchainCoop.prototype.register = function(user, password, org, newuser, newpa
 
 	return cbctx;
 };
+
+
+/**
+ * Chaincode query
+ * 
+ * @param user {string} - The user name.
+ * @param peer {string} - The peer to query.
+ * @param org {string} - The organization.
+ * @param channel {string} - The channel name.
+ * @param ccid {string} - The chaincode id.
+ * @param fcn {string} - The query function name.
+ * @param args {array} - The query arguments array.
+ * @param cbctx {object} - Object in the context of which the callbacks are executed.
+ * @return {object} cbctx - The context object.
+ */
+
+BlockchainCoop.prototype.query = function(user, peer, org, channel, ccid, fcn, args, cbctx) {
+	var self = this;
+	var hfcOrg = self.ORGS[org];
+	// Create a keyVal store
+	self.hfc.newDefaultKeyValueStore({path: self.kvsPath})
+		.then(function(kvs) {
+			self.client.setStateStore(kvs);
+			return self.client.getUserContext(user, true);
+		},
+		cbctx.onError
+	// Check user enrollment
+	).then(function(userCtx) {
+		return new Promise(function(resolve, reject) {
+			if (userCtx && userCtx.isEnrolled()) {
+				resolve(userCtx);
+			}
+			else
+				reject("Unknown user: " + user);
+		});
+	},
+	cbctx.onError
+// User enrolled
+	).then(function(userCtx) {
+		var hfcChannel = self.client.newChannel(channel);
+		var tls_cacertsBuf = self.fs.readFileSync(hfcOrg[peer].tls_cacerts);
+		var hfcPeer = self.client.newPeer(
+			hfcOrg[peer].requests,
+			{
+				'pem': Buffer.from(tls_cacertsBuf).toString(),
+				'ssl-target-name-override': hfcOrg[peer]['server-hostname']
+			}
+		);
+		hfcChannel.addPeer(hfcPeer);
+		var req = {
+			chaincodeId: ccid,
+			txId: null,
+			fcn: fcn,
+			args: args
+		};
+		return hfcChannel.queryByChaincode(req);
+	},
+	cbctx.onError
+// Got query results
+	).then(function(payloads) {
+		results = [];
+		payloads.map((payload) => {
+			str = Buffer.from(payload).toString();
+			if (str) 
+				results.push(JSON.parse(str));
+		});
+		var result = results;
+		if (result.length == 0)
+			result = null;
+		else if (result.length == 1)
+			result = results.pop()
+		cbctx.onOk(result);
+	},
+	cbctx.onError);
+
+	return cbctx;
+};
+
+
 

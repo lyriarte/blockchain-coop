@@ -10,7 +10,7 @@ var args = {
 	"enroll": ["user", "password", "org"], 
 	"check": ["user"], 
 	"invoke": ["user", "endorsers", "channel", "ccid", "fcn"], 
-	"query": ["user", "peer", "channel", "ccid", "fcn"]
+	"query": ["user", "peer", "org", "channel", "ccid", "fcn"]
 };
 var cmds = Object.keys(args);
 
@@ -27,8 +27,8 @@ function usage() {
 		msg += " " + command;
 		args[command].map((x) => {msg += " <" + x + ">";});
 		if (command == "query")
-			msg += " [query args]*\npeer spec format: peer:org";
-		if (["invoke","query"].indexOf(command) >= 0)
+			msg += " [query args]*";
+		else if (command == "invoke")
 			msg += " [transaction args]*\nendorsers list format: peer0:org0,peer1:org0,peerx:orgx...";
 	}
 	console.log(msg);
@@ -46,6 +46,8 @@ var context = {
 
 args[command].map((x) => {context[x] = process.argv[index++];});
 
+if (command == "query" || command == "invoke")
+	context["args"] = process.argv.slice(args[command].length + 3);
 
 /*
  * Create a BlockchainCoop instance
