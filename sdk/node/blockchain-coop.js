@@ -38,6 +38,8 @@ BlockchainCoop.prototype.perform = function(command, context, onOk, onError) {
 
 	if (command == "check")
 		cbctx = this.check(context.user, cbctx);
+	else if (command == "enroll")
+		cbctx = this.enroll(context.user, context.password, context.org, cbctx);
 
 	return cbctx;
 };
@@ -69,6 +71,58 @@ BlockchainCoop.prototype.check = function(user, cbctx) {
 				cbctx.onError("Unknown user: " + user);
 		},
 		cbctx.onError);
+
+	return cbctx;
+};
+
+
+
+/**
+ * User enrollment
+ * 
+ * @param user {string} - The user name.
+ * @param password {string} - The user password.
+ * @param org {string} - The organization.
+ * @param cbctx {object} - Object in the context of which the callbacks are executed.
+ * @return {object} cbctx - The context object.
+ */
+
+BlockchainCoop.prototype.enroll = function(user, password, org, cbctx) {
+	var self = this;
+	var hfcUser = new self.User(user);
+	var hfcOrg = self.ORGS[org];
+	var req = {
+		enrollmentID: user,
+		enrollmentSecret: password
+	};
+	var	tlsOptions = {
+		trustedRoots: [],
+		verify: false
+	};
+	// Create a keyVal store
+	self.hfc.newDefaultKeyValueStore({path: self.kvsPath})
+		.then(function(kvs) {
+			self.client.setStateStore(kvs);
+		var caService = new self.FabricCAServices(hfcOrg.ca.url, tlsOptions, hfcOrg.ca.name);
+		return caService.enroll(req);
+	},
+	cbctx.onError
+// Enroll the user
+	).then(function(enrollment) {
+		return hfcUser.setEnrollment(enrollment.key, enrollment.certificate, hfcOrg.mspid);
+	},
+	cbctx.onError
+// Store enrolled user info
+	).then(function() {
+//		return client.setUserContext(user,false); #### TODO FIX Client.js:1490 user instanceof User
+		self.client._userContext = hfcUser;
+		return self.client.saveUserToStateStore();
+	},
+	cbctx.onError
+	).then(function() {
+		cbctx.onOk(hfcUser);
+	},
+	cbctx.onError);
 
 	return cbctx;
 };
