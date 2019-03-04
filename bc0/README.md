@@ -186,22 +186,22 @@ source .env
   * Enroll the bc0 admin
 
 ```
-enroll.js $ca__ADMIN $ca__PASSWD bc0
-check-enrollment.js $ca__ADMIN
-query.js $ca__ADMIN peer0:bc0 sandbox ex02 query a
-invoke.js $ca__ADMIN peer0:bc0 sandbox ex02 invoke a b 1
-query.js $ca__ADMIN peer0:bc0 sandbox ex02 query a
+bcc-cli.js enroll $ca__ADMIN $ca__PASSWD bc0
+bcc-cli.js check $ca__ADMIN
+bcc-cli.js query $ca__ADMIN peer0 bc0 sandbox ex02 query a
+bcc-cli.js invoke $ca__ADMIN peer0:bc0 sandbox ex02 invoke a b 1
+bcc-cli.js query $ca__ADMIN peer0 bc0 sandbox ex02 query a
 ```
 
   * Register and enroll a new user
 
 ```
-register.js $ca__ADMIN $ca__PASSWD bc0 Fred ABCD1234
-enroll.js Fred ABCD1234 bc0
-check-enrollment.js Fred
-query.js Fred peer0:bc0 sandbox ex02 query b
-invoke.js Fred peer0:bc0 sandbox ex02 invoke a b 50
-query.js Fred peer0:bc0 sandbox ex02 query b
+bcc-cli.js register $ca__ADMIN $ca__PASSWD bc0 Fred ABCD1234
+bcc-cli.js enroll Fred ABCD1234 bc0
+bcc-cli.js check Fred
+bcc-cli.js query Fred peer0 bc0 sandbox ex02 query b
+bcc-cli.js invoke Fred peer0:bc0 sandbox ex02 invoke a b 50
+bcc-cli.js query Fred peer0 bc0 sandbox ex02 query b
 ```
 
 
