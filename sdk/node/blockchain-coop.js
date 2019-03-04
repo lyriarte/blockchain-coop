@@ -36,5 +36,40 @@ BlockchainCoop.prototype.perform = function(command, context, onOk, onError) {
 		onError: onError ? onError: function() {}
 	};
 
+	if (command == "check")
+		cbctx = this.check(context.user, cbctx);
+
 	return cbctx;
 };
+
+
+/**
+ * User enrollment check
+ * 
+ * @param user {string} - The user name.
+ * @param cbctx {object} - Object in the context of which the callbacks are executed.
+ * @return {object} cbctx - The context object.
+ */
+
+BlockchainCoop.prototype.check = function(user, cbctx) {
+	var self = this;
+	// Create a keyVal store
+	self.hfc.newDefaultKeyValueStore({path: self.kvsPath})
+		.then(function(kvs) {
+			self.client.setStateStore(kvs);
+			return self.client.getUserContext(user, true);
+		},
+		cbctx.onError
+	// Check user enrollment
+		).then(function(userCtx) {
+			if (userCtx) {
+				cbctx.onOk(userCtx.isEnrolled());
+			}
+			else
+				cbctx.onError("Unknown user: " + user);
+		},
+		cbctx.onError);
+
+	return cbctx;
+};
+
