@@ -46,6 +46,20 @@ var context = {
 
 args[command].map((x) => {context[x] = process.argv[index++];});
 
+if (command == "invoke") {
+	var peersOrgs = context.endorsers.split(',');
+	context.endorsers = [];
+	peersOrgs.map(function(peerOrgStr)
+	{
+		var peerOrgArray = peerOrgStr.split(':');
+		context.endorsers.push(
+		{
+			'peer': peerOrgArray[0], 
+			'org': peerOrgArray[1]
+		});
+	});
+}
+
 if (command == "query" || command == "invoke")
 	context["args"] = process.argv.slice(args[command].length + 3);
 

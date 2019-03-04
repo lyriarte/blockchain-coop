@@ -45,6 +45,8 @@ BlockchainCoop.prototype.perform = function(command, context, onOk, onError) {
 		cbctx = this.register(context.user, context.password, context.org, context.newuser, context.newpass, cbctx);
 	else if (command == "query")
 		cbctx = this.query(context.user, context.peer, context.org, context.channel, context.ccid, context.fcn, context.args, cbctx);
+	else if (command == "invoke")
+		cbctx = this.invoke(context.user, context.endorsers, context.channel, context.ccid, context.fcn, context.args, cbctx);
 
 	return cbctx;
 };
@@ -255,5 +257,102 @@ BlockchainCoop.prototype.query = function(user, peer, org, channel, ccid, fcn, a
 	return cbctx;
 };
 
+
+
+/**
+ * Chaincode invocation
+ * 
+ * @param user {string} - The user name.
+ * @param endorsers {string} - The endorser peers.
+ * @param channel {string} - The channel name.
+ * @param ccid {string} - The chaincode id.
+ * @param fcn {string} - The function to invoke.
+ * @param args {array} - The function arguments array.
+ * @param cbctx {object} - Object in the context of which the callbacks are executed.
+ * @return {object} cbctx - The context object.
+ */
+
+BlockchainCoop.prototype.invoke = function(user, endorsers, channel, ccid, fcn, args, cbctx) {
+	var self = this;
+	var hfcChannel = null;
+
+	// Peer info management utility
+	var peerInfoSetProxy = function(peerInfo) {
+		var tls_cacertsBuf = self.fs.readFileSync(self.ORGS[peerInfo.org][peerInfo.peer].tls_cacerts);
+		peerInfo.peerProxy = self.client.newPeer(
+			self.ORGS[peerInfo.org][peerInfo.peer].requests,
+			{
+				'pem': Buffer.from(tls_cacertsBuf).toString(),
+				'ssl-target-name-override': self.ORGS[peerInfo.org][peerInfo.peer]['server-hostname']
+			}
+		);
+	}
+
+	// Create a keyVal store
+	self.hfc.newDefaultKeyValueStore({path: self.kvsPath})
+		.then(function(kvs) {
+			self.client.setStateStore(kvs);
+			return self.client.getUserContext(user, true);
+		},
+		cbctx.onError
+	// Check user enrollment
+	).then(function(userCtx) {
+		return new Promise(function(resolve, reject) {
+			if (userCtx && userCtx.isEnrolled()) {
+				resolve(userCtx);
+			}
+			else
+				reject("Unknown user: " + user);
+		});
+	},
+	cbctx.onError
+// User enrolled
+	).then(function(userCtx) {
+		hfcChannel = self.client.newChannel(channel);
+		var tls_cacertsBuf = self.fs.readFileSync(self.ORGS.orderer.tls_cacerts);
+		var orderer = self.client.newOrderer(
+			self.ORGS.orderer.url, 
+			{
+				'pem': Buffer.from(tls_cacertsBuf).toString(),
+				'ssl-target-name-override': self.ORGS.orderer['server-hostname']
+			}
+		);
+		hfcChannel.addOrderer(orderer);
+		var targets = [];
+		endorsers.map(function(endorser)
+		{
+			peerInfoSetProxy(endorser);
+			hfcChannel.addPeer(endorser.peerProxy);
+			targets.push(endorser.peerProxy);
+		});
+		var req = {
+			chaincodeId: ccid,
+			txId: self.client.newTransactionID(),
+			fcn: fcn,
+			targets: targets,
+			args: args
+		};
+		cbctx['transactionID'] = req.txId.getTransactionID();
+		return hfcChannel.sendTransactionProposal(req);
+	},
+	cbctx.onError
+// Got endorsers results
+	).then(function(results) {
+		cbctx['proposalResponses'] = results[0];
+		var req = {
+			proposalResponses: results[0],
+			proposal: results[1]
+		};
+		return hfcChannel.sendTransaction(req);
+	},
+	cbctx.onError
+// Got orderer response
+	).then(function(response) {
+		cbctx.onOk(response);
+	},
+	cbctx.onError);
+
+	return cbctx;
+};
 
 
