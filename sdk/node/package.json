@@ -1,0 +1,21 @@
+{
+	"name"			: "blockchain-coop",
+	"version"		: "0.0.1",
+	"description"	: "The BlockchainCoop wrapper object for Hyperledger fabric and fabric-ca client.",
+	"keywords"		: [
+		"blockchain", 
+		"hyperledger"
+	],
+	"maintainers": [
+			"Luc Yriarte <luc.yriarte@civis-blockchain.org>"
+	],
+	"dependencies": {
+		"fabric-client": ">= 1.4.0",
+		"fabric-ca-client": ">= 1.4.0"
+	},
+	"license"      : "Apache 2.0",
+	"repository"   : {
+		"type": "git",
+		"url" : "https://github.com/civis-blockchain/blockchain-coop.git"
+	}
+}

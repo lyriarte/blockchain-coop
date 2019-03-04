@@ -119,7 +119,8 @@ exit
 ### Use the node.js SDK
 
 ```
-export PATH=../sdk/node:$PATH
+npm install ../sdk/node/
+export PATH=$(pwd)/node_modules/blockchain-coop:$PATH
 source .env
 ```
 
