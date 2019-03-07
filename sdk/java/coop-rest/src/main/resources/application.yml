@@ -1,0 +1,8 @@
+coop:
+  user:
+    name:
+    password:
+    org:
+
+server:
+  port : 8081
