@@ -1,0 +1,3 @@
+rootProject.name = "blockchain-coop-core"
+
+include 'coop-core'

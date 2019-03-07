@@ -1,0 +1,15 @@
+allprojects {
+    apply plugin: 'idea'
+
+//    group = 'io.civis.ssm.core'
+    version = '0.0.1-SNAPSHOT'
+    
+}
+
+
+subprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
