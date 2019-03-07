@@ -94,9 +94,8 @@ var httpReqHandler = function(req, res) {
 	var reqArgs = url.parse(req.url, true).query;
 	var command = reqArgs.cmd;
 	context.fcn = reqArgs.fcn;
-	context.args = [];
+	context.args = reqArgs.args;
 	try {
-		context.args = JSON.parse(reqArgs.args);
 		var cbctx = {};
 		var bcc = new BlockchainCoop(context);
 		cbctx = bcc.perform(command, context, successHandler, errHandler);
