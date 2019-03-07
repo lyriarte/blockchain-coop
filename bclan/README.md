@@ -67,12 +67,6 @@ echo cli_USER=Admin >> .env
 docker-compose -f docker-compose.yaml up -d
 ```
 
-### Start explorer
-
-```
-docker-compose -f docker-compose.explorer.yaml up -d
-```
-
 ### Use the CLI container environment
 
 
