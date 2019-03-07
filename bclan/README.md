@@ -54,6 +54,8 @@ echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/ca/*
 echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/tlsca/*_sk)) >> .env
 echo ca__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 echo ca__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo explorerdb__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo explorerdb__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 
 echo cli_ORGA=${ORGA} >> .env
 echo cli_USER=Admin >> .env
@@ -63,6 +65,12 @@ echo cli_USER=Admin >> .env
 
 ```
 docker-compose -f docker-compose.yaml up -d
+```
+
+### Start explorer
+
+```
+docker-compose -f docker-compose.explorer.yaml up -d
 ```
 
 ### Use the CLI container environment

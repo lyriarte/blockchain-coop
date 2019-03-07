@@ -68,6 +68,7 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bc-coop.bclan:7051
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:

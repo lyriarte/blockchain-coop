@@ -1,0 +1,91 @@
+{
+  "network-configs": {
+    "network-1": {
+      "version": "1.0",
+      "clients": {
+        "client-1": {
+          "tlsEnable": true,
+          "organization": "bclan",
+          "channel": "sandbox",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_Org2/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_Org2/crypto"
+            }
+          }
+        }
+      },
+      "channels": {
+        "sandbox": {
+          "peers": {
+            "peer0.bc-coop.bclan": {}
+          },
+          "connection": {
+            "timeout": {
+              "peer": {
+                "endorser": "6000",
+                "eventHub": "6000",
+                "eventReg": "6000"
+              }
+            }
+          }
+        }
+      },
+      "organizations": {
+        "bclan": {
+          "mspid": "BlockchainLANCoopMSP",
+          "fullpath": false,
+          "adminPrivateKey": {
+            "path": "/etc/hyperledger/admin/peer/msp/keystore"
+          },
+          "signedCert": {
+            "path": "/etc/hyperledger/admin/peer/msp/signcerts"
+          },
+          "certificateAuthorities": [
+            "ca"
+          ],
+          "peers": [
+            "peer0.bc-coop.bclan"
+          ]
+        },
+        "OrdererMSP": {
+          "mspid": "BlockchainLANOrdererMSP",
+          "adminPrivateKey": {
+            "path": "/etc/hyperledger/admin/orderer/msp/keystore"
+          }
+        }
+      },
+      "peers": {
+        "peer0.bc-coop.bclan": {
+          "tlsCACerts": {
+            "path": "/etc/hyperledger/peer0/tls/ca.crt"
+          },
+          "url": "grpcs://peer0.bc-coop.bclan:7051",
+          "eventUrl": "grpcs://peer0.bc-coop.bclan:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.bc-coop.bclan"
+          }
+        }
+      },
+      "orderers": {
+        "orderer.bc-coop.bclan": {
+          "url": "grpcs://orderer.bc-coop.bclan:7050"
+        }
+      },
+      "certificateAuthorities": {
+        "ca": {
+          "url": "https://ca.bc-coop.bclan:7054",
+          "httpOptions": {
+            "verify": false
+          },
+          "tlsCACerts": {
+            "path": "/etc/hyperledger/admin/peer/msp/tlscacerts/tlsca.bc-coop.bclan-cert.pem"
+          },
+          "caName": "ca"
+        }
+      }
+    }
+  },
+  "configtxgenToolPath": "fabric-path/fabric-samples/bin",
+  "license": "Apache-2.0"
+}

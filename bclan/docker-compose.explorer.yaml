@@ -1,0 +1,46 @@
+version: '2.1'
+
+volumes:
+  explorerdb_pgdata:
+  credentialstore:
+
+networks:
+  bclannet:
+
+services:
+  explorerdb.bc-coop.bclan:
+    image: hyperledger/explorer-db:latest
+    container_name: explorerdb.bc-coop.bclan
+    hostname: explorerdb.bc-coop.bclan
+    environment:
+      - DATABASE_DATABASE=fabricexplorer
+      - DATABASE_USERNAME=${explorerdb__ADMIN}
+      - DATABASE_PASSWORD=${explorerdb__PASSWD}
+    volumes:
+      - ../util/explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
+      - explorerdb_pgdata:/var/lib/postgresql/data
+    networks:
+      - bclannet
+
+  explorer.bc-coop.bclan:
+    image: hyperledger/explorer:latest
+    container_name: explorer.bc-coop.bclan
+    hostname: explorer.bc-coop.bclan
+    environment:
+      - DATABASE_HOST=explorerdb.bc-coop.bclan
+      - DATABASE_USERNAME=${explorerdb__ADMIN}
+      - DATABASE_PASSWD=${explorerdb__PASSWD}
+      - DISCOVERY_AS_LOCALHOST=false
+      - ADMIN_USERNAME=${ca__ADMIN}
+      - ADMIN_SECRET=${ca__PASSWD}
+    volumes:
+      - ./explorer-config/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ./crypto-config/peerOrganizations/${cli_ORGA}/users/${cli_USER}@bc-coop.bclan/:/etc/hyperledger/admin/peer
+      - ./crypto-config/ordererOrganizations/bclan/users/${cli_USER}@bclan:/etc/hyperledger/admin/orderer
+      - ./crypto-config/peerOrganizations/${cli_ORGA}/peers/peer0.bc-coop.bclan:/etc/hyperledger/peer0
+      - credentialstore:/opt/tmp
+    command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
+    ports:
+      - 8080:8080
+    networks:
+      - bclannet
