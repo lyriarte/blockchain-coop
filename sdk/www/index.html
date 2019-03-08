@@ -1,0 +1,78 @@
+<html>
+<head>
+  <title>Blockchain Coop</title>
+</head>
+
+<script type="text/javascript">
+
+function hostCmd(uri, cmd, fcn, args, onOk, onError) {
+	
+	var cbctx = {
+		onOk: onOk,
+		onError: onError
+	};
+
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState != 4)
+			return;
+		if (this.status != 200) {
+			if (cbctx.onError)
+				cbctx.onError(this.responseText);
+		}
+		else {
+			if (cbctx.onOk)
+				cbctx.onOk(this.responseText);
+		}
+	};
+
+	var query = encodeURI("cmd=" + cmd + "&fcn=" + fcn);
+	args.map(function(arg) {query += encodeURI("&args=" + arg);});
+	xmlhttp.open("GET", uri + "?" + query, true);
+	xmlhttp.send();
+	return cbctx;
+}
+
+function hostCmdSetup(cmd) {
+	var uri = "http://" + document.getElementById('host__Fld').value + ":" + document.getElementById('port__Fld').value;
+	var fcn = document.getElementById('fcn__Fld').value;
+	if (!fcn) {
+		fcn = cmd;
+		document.getElementById('fcn__Fld').value = fcn;
+	}
+	var args = document.getElementById('args__Fld').value.split("\n");
+	hostCmd(uri, cmd, fcn, args, logResult, logResult);
+}
+
+function logResult(result) {
+	document.getElementById('result__Log').innerHTML = result;
+}
+
+</script>
+
+<body>
+
+<center><h1>Blockchain Coop</h1></center>
+
+<h2>Transaction parameters</h2>
+<form>
+Host address <input type="text" size="12" value="127.0.0.1" id="host__Fld">:<input type="text" size="6" value="8080" id="port__Fld">
+<br>
+Function <input type="text" size="30" id="fcn__Fld">
+<br>
+Arguments lines
+<br>
+<textarea rows="8" cols="40" id="args__Fld">
+</textarea>
+<br>
+<input type="button" value="Query" onclick="hostCmdSetup('query')"/>
+<input type="button" value="Invoke" onclick="hostCmdSetup('invoke')"/>
+<input type="reset" value="Reset"/>
+</form>
+
+<h2>Results</h2>
+<pre id="result__Log">
+</pre>
+
+</body>
+</html>
