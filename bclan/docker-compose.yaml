@@ -68,6 +68,7 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bc-coop.bclan:7051
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -109,4 +110,39 @@ services:
         - ./config/:/etc/hyperledger/config/
     networks:
         - bclannet
+
+  explorerdb.bc-coop.bclan:
+    image: hyperledger/explorer-db:latest
+    container_name: explorerdb.bc-coop.bclan
+    hostname: explorerdb.bc-coop.bclan
+    environment:
+      - DATABASE_DATABASE=fabricexplorer
+      - DATABASE_USERNAME=${explorerdb__ADMIN}
+      - DATABASE_PASSWORD=${explorerdb__PASSWD}
+    volumes:
+      - ../util/explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
+    networks:
+      - bclannet
+
+  explorer.bc-coop.bclan:
+    image: hyperledger/explorer:latest
+    container_name: explorer.bc-coop.bclan
+    hostname: explorer.bc-coop.bclan
+    environment:
+      - DATABASE_HOST=explorerdb.bc-coop.bclan
+      - DATABASE_USERNAME=${explorerdb__ADMIN}
+      - DATABASE_PASSWD=${explorerdb__PASSWD}
+      - DISCOVERY_AS_LOCALHOST=false
+      - ADMIN_USERNAME=${ca__ADMIN}
+      - ADMIN_SECRET=${ca__PASSWD}
+    volumes:
+      - ./explorer-config/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ./crypto-config/peerOrganizations/${cli_ORGA}/users/${cli_USER}@bc-coop.bclan/:/etc/hyperledger/admin/peer
+      - ./crypto-config/ordererOrganizations/bclan/users/${cli_USER}@bclan:/etc/hyperledger/admin/orderer
+      - ./crypto-config/peerOrganizations/${cli_ORGA}/peers/peer0.bc-coop.bclan:/etc/hyperledger/peer0
+    command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
+    ports:
+      - 8080:8080
+    networks:
+      - bclannet
 
