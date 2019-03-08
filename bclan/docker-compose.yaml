@@ -3,10 +3,6 @@
 
 version: '2'
 
-volumes:
-  explorerdb_pgdata:
-  credentialstore:
-
 networks:
   bclannet:
 
@@ -125,7 +121,6 @@ services:
       - DATABASE_PASSWORD=${explorerdb__PASSWD}
     volumes:
       - ../util/explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
-      - explorerdb_pgdata:/var/lib/postgresql/data
     networks:
       - bclannet
 
@@ -145,7 +140,6 @@ services:
       - ./crypto-config/peerOrganizations/${cli_ORGA}/users/${cli_USER}@bc-coop.bclan/:/etc/hyperledger/admin/peer
       - ./crypto-config/ordererOrganizations/bclan/users/${cli_USER}@bclan:/etc/hyperledger/admin/orderer
       - ./crypto-config/peerOrganizations/${cli_ORGA}/peers/peer0.bc-coop.bclan:/etc/hyperledger/peer0
-      - credentialstore:/opt/tmp
     command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
     ports:
       - 8080:8080
