@@ -76,7 +76,7 @@ bcc-rest.js 8080 $ca__ADMIN peer0:bclan sandbox ex02
 ```
 
 ```
-curl "http://127.0.0.1:8080/?cmd=query&fcn=query&args=a
+curl "http://127.0.0.1:8080/?cmd=query&fcn=query&args=a"
 curl "http://127.0.0.1:8080/?cmd=invoke&fcn=invoke&args=b&args=a&args=50"
 curl "http://127.0.0.1:8080/?cmd=query&fcn=query&args=a"
 ```
