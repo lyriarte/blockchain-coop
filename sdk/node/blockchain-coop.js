@@ -232,7 +232,7 @@ BlockchainCoop.prototype.query = function(user, peer, org, channel, ccid, fcn, a
 			chaincodeId: ccid,
 			txId: null,
 			fcn: fcn,
-			args: args
+			args: Array.isArray(args) ? args : [args]
 		};
 		return hfcChannel.queryByChaincode(req);
 	},
@@ -330,7 +330,7 @@ BlockchainCoop.prototype.invoke = function(user, endorsers, channel, ccid, fcn, 
 			txId: self.client.newTransactionID(),
 			fcn: fcn,
 			targets: targets,
-			args: args
+			args: Array.isArray(args) ? args : [args]
 		};
 		cbctx['transactionID'] = req.txId.getTransactionID();
 		return hfcChannel.sendTransactionProposal(req);

@@ -1,6 +1,6 @@
 {
 	"name"			: "blockchain-coop",
-	"version"		: "0.0.3",
+	"version"		: "0.0.4",
 	"description"	: "The BlockchainCoop wrapper object for Hyperledger fabric and fabric-ca client.",
 	"keywords"		: [
 		"blockchain", 
