@@ -3,35 +3,8 @@
   <title>Blockchain Coop</title>
 </head>
 
+<script src="bcc-xmlhttp.js"></script>
 <script type="text/javascript">
-
-function hostCmd(uri, cmd, fcn, args, onOk, onError) {
-	
-	var cbctx = {
-		onOk: onOk,
-		onError: onError
-	};
-
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function() {
-		if (this.readyState != 4)
-			return;
-		if (this.status != 200) {
-			if (cbctx.onError)
-				cbctx.onError(this.responseText);
-		}
-		else {
-			if (cbctx.onOk)
-				cbctx.onOk(this.responseText);
-		}
-	};
-
-	var query = encodeURI("cmd=" + cmd + "&fcn=" + fcn);
-	args.map(function(arg) {query += encodeURI("&args=" + arg);});
-	xmlhttp.open("GET", uri + "?" + query, true);
-	xmlhttp.send();
-	return cbctx;
-}
 
 function hostCmdSetup(cmd) {
 	var uri = "http://" + document.getElementById('host__Fld').value + ":" + document.getElementById('port__Fld').value;
@@ -41,7 +14,7 @@ function hostCmdSetup(cmd) {
 		document.getElementById('fcn__Fld').value = fcn;
 	}
 	var args = document.getElementById('args__Fld').value.split("\n");
-	hostCmd(uri, cmd, fcn, args, logResult, logResult);
+	bccHostCmd(uri, cmd, fcn, args, logResult, logResult);
 }
 
 function logResult(result) {
