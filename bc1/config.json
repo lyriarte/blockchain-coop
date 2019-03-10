@@ -6,8 +6,8 @@
 			"tls_cacerts": "crypto-config/ordererOrganizations/or-bc1.chain-ops.net/orderers/orderer0.or-bc1.chain-ops.net/msp/tlscacerts/tlsca.or-bc1.chain-ops.net-cert.pem"
 		},
 		"ChainOps": {
-			"name": "ChainOpsBC0Peer",
-			"mspid": "ChainOpsBC0PeerMSP",
+			"name": "ChainOpsBC1Peer",
+			"mspid": "ChainOpsBC1PeerMSP",
 			"ca": {
 				"url": "https://ca.pr-bc1.chain-ops.net:7054",
 				"name": "ca"
@@ -26,8 +26,8 @@
 			}
 		},
 		"CivisBlockchain": {
-			"name": "CivisBlockchainBC0Peer",
-			"mspid": "CivisBlockchainBC0PeerMSP",
+			"name": "CivisBlockchainBC1Peer",
+			"mspid": "CivisBlockchainBC1PeerMSP",
 			"ca": {
 				"url": "https://ca.pr-bc1.civis-blockchain.org:7054",
 				"name": "ca"
@@ -46,8 +46,8 @@
 			}
 		},
 		"Thingagora": {
-			"name": "ThingagoraBC0Peer",
-			"mspid": "ThingagoraBC0PeerMSP",
+			"name": "ThingagoraBC1Peer",
+			"mspid": "ThingagoraBC1PeerMSP",
 			"ca": {
 				"url": "https://ca.pr-bc1.thingagora.org:7054",
 				"name": "ca"
