@@ -18,6 +18,7 @@
       "channels": {
         "sandbox": {
           "peers": {
+            "peer0.pr-bc1.civis-blockchain.org": {},
             "peer1.pr-bc1.civis-blockchain.org": {}
           },
           "connection": {
@@ -45,11 +46,22 @@
             "ca"
           ],
           "peers": [
+            "peer0.pr-bc1.civis-blockchain.org",
             "peer1.pr-bc1.civis-blockchain.org"
           ]
         }
       },
       "peers": {
+        "peer0.pr-bc1.civis-blockchain.org": {
+          "tlsCACerts": {
+            "path": "/etc/hyperledger/pr-bc1.civis-blockchain.org/peer0/tls/ca.crt"
+          },
+          "url": "grpcs://peer0.pr-bc1.civis-blockchain.org:7051",
+          "eventUrl": "grpcs://peer0.pr-bc1.civis-blockchain.org:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.pr-bc1.civis-blockchain.org"
+          }
+        },
         "peer1.pr-bc1.civis-blockchain.org": {
           "tlsCACerts": {
             "path": "/etc/hyperledger/pr-bc1.civis-blockchain.org/peer1/tls/ca.crt"
