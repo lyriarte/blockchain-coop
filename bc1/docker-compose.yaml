@@ -195,6 +195,7 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.pr-bc1.civis-blockchain.org:7051
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -293,6 +294,45 @@ services:
         - ./crypto-config/peerOrganizations/${cli_ORGA}/users/${cli_USER}@${cli_ORGA}/:/etc/hyperledger/user/
         - ./crypto-config/ordererOrganizations/or-bc1.chain-ops.net/tlsca/:/etc/hyperledger/orderer/
         - ./config/:/etc/hyperledger/config/
+    networks:
+        - bc1net
+
+  explorerdb.pr-bc1.civis-blockchain.org:
+    image: hyperledger/explorer-db:0.3.9.1
+    container_name: explorerdb.pr-bc1.civis-blockchain.org
+    hostname: explorerdb.pr-bc1.civis-blockchain.org
+    environment:
+      - DATABASE_DATABASE=fabricexplorer
+      - DATABASE_USERNAME=${explorerdb__ADMIN}
+      - DATABASE_PASSWORD=${explorerdb__PASSWD}
+    ports:
+      - 5432:5432
+    volumes:
+      - ../util/explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
+    networks:
+      - bc1net
+
+  explorer.pr-bc1.civis-blockchain.org:
+    image: hyperledger/explorer:0.3.9.1
+    container_name: explorer.pr-bc1.civis-blockchain.org
+    hostname: explorer.pr-bc1.civis-blockchain.org
+    environment:
+      - DATABASE_HOST=explorerdb.pr-bc1.civis-blockchain.org
+      - DATABASE_USERNAME=${explorerdb__ADMIN}
+      - DATABASE_PASSWD=${explorerdb__PASSWD}
+      - DISCOVERY_AS_LOCALHOST=false
+      - ADMIN_USERNAME=${ca__ADMIN}
+      - ADMIN_SECRET=${ca__PASSWD}
+    volumes:
+      - ./explorer-config/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/users/Admin@pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/user
+      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer0.pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/peer0
+      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer1.pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/peer1
+      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/ca:/etc/hyperledger/pr-bc1.civis-blockchain.org/ca
+      - ./crypto-config/ordererOrganizations/bclan/tlsca:/etc/hyperledger/or-bc1.chain-ops.net/orderer
+    command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
+    ports:
+      - 8080:8080
     networks:
         - bc1net
 

@@ -1,0 +1,85 @@
+{
+  "network-configs": {
+    "network-1": {
+      "version": "1.0",
+      "clients": {
+        "client-1": {
+          "tlsEnable": true,
+          "organization": "CivisBlockchain",
+          "channel": "sandbox",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_Org2/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_Org2/crypto"
+            }
+          }
+        }
+      },
+      "channels": {
+        "sandbox": {
+          "peers": {
+            "peer1.pr-bc1.civis-blockchain.org": {}
+          },
+          "connection": {
+            "timeout": {
+              "peer": {
+                "endorser": "6000",
+                "eventHub": "6000",
+                "eventReg": "6000"
+              }
+            }
+          }
+        }
+      },
+      "organizations": {
+        "CivisBlockchain": {
+          "mspid": "CivisBlockchainBC1PeerMSP",
+          "fullpath": false,
+          "adminPrivateKey": {
+            "path": "/etc/hyperledger/pr-bc1.civis-blockchain.org/user/msp/keystore"
+          },
+          "signedCert": {
+            "path": "/etc/hyperledger/pr-bc1.civis-blockchain.org/user/msp/signcerts"
+          },
+          "certificateAuthorities": [
+            "ca"
+          ],
+          "peers": [
+            "peer1.pr-bc1.civis-blockchain.org"
+          ]
+        }
+      },
+      "peers": {
+        "peer1.pr-bc1.civis-blockchain.org": {
+          "tlsCACerts": {
+            "path": "/etc/hyperledger/pr-bc1.civis-blockchain.org/peer1/tls/ca.crt"
+          },
+          "url": "grpcs://peer1.pr-bc1.civis-blockchain.org:7051",
+          "eventUrl": "grpcs://peer1.pr-bc1.civis-blockchain.org:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer1.pr-bc1.civis-blockchain.org"
+          }
+        }
+      },
+      "orderers": {
+        "orderer0.or-bc1.chain-ops.net": {
+          "url": "grpcs://orderer0.or-bc1.chain-ops.net:7050"
+        }
+      },
+      "certificateAuthorities": {
+        "ca": {
+          "url": "https://ca.pr-bc1.civis-blockchain.org:7054",
+          "httpOptions": {
+            "verify": false
+          },
+          "tlsCACerts": {
+            "path": "/etc/hyperledger/pr-bc1.civis-blockchain.org/ca/ca.pr-bc1.civis-blockchain.org-cert.pem"
+          },
+          "caName": "ca"
+        }
+      }
+    }
+  },
+  "configtxgenToolPath": "fabric-path/fabric-samples/bin",
+  "license": "Apache-2.0"
+}
