@@ -26,7 +26,7 @@ Organizations:
       Policies: *BlockchainCoopDefaults
       AnchorPeers:
         - Host: peer0.pr-bc0.thingagora.org
-          Port: 7051
+          Port: 7151
 
 Application: &ApplicationDefaults
     Organizations:

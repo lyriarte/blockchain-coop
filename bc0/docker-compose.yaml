@@ -63,16 +63,20 @@ services:
       - CORE_CHAINCODE_LOGGING_LEVEL=info
       - CORE_PEER_LOCALMSPID=ThingagoraBC0PeerMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/
-      - CORE_PEER_ADDRESS=peer0.pr-bc0.thingagora.org:7051
+      - CORE_PEER_ADDRESS=peer0.pr-bc0.thingagora.org:7151
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7151
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.pr-bc0.thingagora.org:7152
       - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.pr-bc0.thingagora.org:7151
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
-      - 7051:7051
-      - 7053:7053
+      - 7151:7151
+      - 7152:7052
+      - 7153:7053
     volumes:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer0.pr-bc0.thingagora.org/msp:/etc/hyperledger/msp/
@@ -91,7 +95,9 @@ services:
       - CORE_CHAINCODE_LOGGING_LEVEL=info
       - CORE_PEER_LOCALMSPID=ThingagoraBC0PeerMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/
-      - CORE_PEER_ADDRESS=peer1.pr-bc0.thingagora.org:7051
+      - CORE_PEER_ADDRESS=peer1.pr-bc0.thingagora.org:7151
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7151
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer1.pr-bc0.thingagora.org:7152
       - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
@@ -99,8 +105,9 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
-      - 7051:7051
-      - 7053:7053
+      - 7151:7151
+      - 7152:7052
+      - 7153:7053
     volumes:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer1.pr-bc0.thingagora.org/msp:/etc/hyperledger/msp/
@@ -118,7 +125,7 @@ services:
       - FABRIC_LOGGING_SPEC=info
       - CORE_CHAINCODE_LOGGING_LEVEL=info
       - CORE_PEER_ID=cli.${cli_ORGA}
-      - CORE_PEER_ADDRESS=peer0.${cli_ORGA}:7051
+      - CORE_PEER_ADDRESS=peer0.${cli_ORGA}:7151
       - CORE_PEER_LOCALMSPID=ThingagoraBC0PeerMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/user/msp/
       - CORE_CHAINCODE_KEEPALIVE=10
@@ -137,4 +144,39 @@ services:
         - ./config/:/etc/hyperledger/config/
     networks:
         - bc0net
+
+  explorerdb.pr-bc0.thingagora.org:
+    image: hyperledger/explorer-db:latest
+    container_name: explorerdb.pr-bc0.thingagora.org
+    hostname: explorerdb.pr-bc0.thingagora.org
+    environment:
+      - DATABASE_DATABASE=fabricexplorer
+      - DATABASE_USERNAME=${explorerdb__ADMIN}
+      - DATABASE_PASSWORD=${explorerdb__PASSWD}
+    volumes:
+      - ../util/explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
+    networks:
+      - bc0net
+
+  explorer.pr-bc0.thingagora.org:
+    image: hyperledger/explorer:latest
+    container_name: explorer.pr-bc0.thingagora.org
+    hostname: explorer.pr-bc0.thingagora.org
+    environment:
+      - DATABASE_HOST=explorerdb.pr-bc0.thingagora.org
+      - DATABASE_USERNAME=${explorerdb__ADMIN}
+      - DATABASE_PASSWD=${explorerdb__PASSWD}
+      - DISCOVERY_AS_LOCALHOST=false
+      - ADMIN_USERNAME=${ca__ADMIN}
+      - ADMIN_SECRET=${ca__PASSWD}
+    volumes:
+      - ./explorer-config/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ./crypto-config/peerOrganizations/${cli_ORGA}/users/${cli_USER}@pr-bc0.thingagora.org/:/etc/hyperledger/admin/peer
+      - ./crypto-config/ordererOrganizations/or-bc0.thingagora.org/users/${cli_USER}@or-bc0.thingagora.org:/etc/hyperledger/admin/orderer
+      - ./crypto-config/peerOrganizations/${cli_ORGA}/peers/peer0.pr-bc0.thingagora.org:/etc/hyperledger/peer0
+    command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
+    ports:
+      - 8080:8080
+    networks:
+      - bc0net
 

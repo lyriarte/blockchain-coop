@@ -1,0 +1,91 @@
+{
+  "network-configs": {
+    "network-1": {
+      "version": "1.0",
+      "clients": {
+        "client-1": {
+          "tlsEnable": true,
+          "organization": "ThingagoraBC0Peer",
+          "channel": "sandbox",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_ThingagoraBC0Peer/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_ThingagoraBC0Peer/crypto"
+            }
+          }
+        }
+      },
+      "channels": {
+        "sandbox": {
+          "peers": {
+            "peer0.pr-bc0.thingagora.org": {}
+          },
+          "connection": {
+            "timeout": {
+              "peer": {
+                "endorser": "6000",
+                "eventHub": "6000",
+                "eventReg": "6000"
+              }
+            }
+          }
+        }
+      },
+      "organizations": {
+        "ThingagoraBC0Peer": {
+          "mspid": "ThingagoraBC0PeerMSP",
+          "fullpath": false,
+          "adminPrivateKey": {
+            "path": "/etc/hyperledger/admin/peer/msp/keystore"
+          },
+          "signedCert": {
+            "path": "/etc/hyperledger/admin/peer/msp/signcerts"
+          },
+          "certificateAuthorities": [
+            "ca"
+          ],
+          "peers": [
+            "peer0.pr-bc0.thingagora.org"
+          ]
+        },
+        "OrdererMSP": {
+          "mspid": "ThingagoraBC0OrdererMSP",
+          "adminPrivateKey": {
+            "path": "/etc/hyperledger/admin/orderer/msp/keystore"
+          }
+        }
+      },
+      "peers": {
+        "peer0.pr-bc0.thingagora.org": {
+          "tlsCACerts": {
+            "path": "/etc/hyperledger/peer0/tls/ca.crt"
+          },
+          "url": "grpcs://peer0.pr-bc0.thingagora.org:7151",
+          "eventUrl": "grpcs://peer0.pr-bc0.thingagora.org:7153",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.pr-bc0.thingagora.org"
+          }
+        }
+      },
+      "orderers": {
+        "orderer0.or-bc0.thingagora.org": {
+          "url": "grpcs://orderer0.or-bc0.thingagora.org:7050"
+        }
+      },
+      "certificateAuthorities": {
+        "ca": {
+          "url": "https://ca.pr-bc0.thingagora.org:7054",
+          "httpOptions": {
+            "verify": false
+          },
+          "tlsCACerts": {
+            "path": "/etc/hyperledger/admin/peer/msp/tlscacerts/tlsca.pr-bc0.thingagora.org-cert.pem"
+          },
+          "caName": "ca"
+        }
+      }
+    }
+  },
+  "configtxgenToolPath": "fabric-path/fabric-samples/bin",
+  "license": "Apache-2.0"
+}

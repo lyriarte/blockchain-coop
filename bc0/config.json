@@ -13,14 +13,14 @@
 				"name": "ca"
 			},
 			"peer0": {
-				"requests": "grpcs://peer0.pr-bc0.thingagora.org:7051",
-				"events": "grpcs://peer0.pr-bc0.thingagora.org:7053",
+				"requests": "grpcs://peer0.pr-bc0.thingagora.org:7151",
+				"events": "grpcs://peer0.pr-bc0.thingagora.org:7153",
 				"server-hostname": "peer0.pr-bc0.thingagora.org",
 				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer0.pr-bc0.thingagora.org/msp/tlscacerts/tlsca.pr-bc0.thingagora.org-cert.pem"
 			},
 			"peer1": {
-				"requests": "grpcs://peer1.pr-bc0.thingagora.org:7051",
-				"events": "grpcs://peer1.pr-bc0.thingagora.org:7053",
+				"requests": "grpcs://peer1.pr-bc0.thingagora.org:7151",
+				"events": "grpcs://peer1.pr-bc0.thingagora.org:7153",
 				"server-hostname": "peer1.pr-bc0.thingagora.org",
 				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer1.pr-bc0.thingagora.org/msp/tlscacerts/tlsca.pr-bc0.thingagora.org-cert.pem"
 			}

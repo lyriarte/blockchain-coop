@@ -58,6 +58,8 @@ echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/ca/*
 echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/tlsca/*_sk)) >> .env
 echo ca__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 echo ca__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo explorerdb__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo explorerdb__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 
 echo cli_ORGA=${ORGA} >> .env
 echo cli_USER=Admin >> .env
@@ -92,6 +94,11 @@ peer-archive.sh peer0 pr-bc0.thingagora.org
 scp peer_peer0_pr-bc0.thingagora.org.tgz blockchain@peer0.pr-bc0.thingagora.org:
 ```
 
+```
+peer-archive.sh peer1 pr-bc0.thingagora.org
+scp peer_peer1_pr-bc0.thingagora.org.tgz blockchain@peer1.pr-bc0.thingagora.org:
+```
+
 ### Start containers on remote hosts
 
 ```
@@ -112,6 +119,12 @@ tar xvzf peer_peer0_pr-bc0.thingagora.org.tgz
 docker-compose -f docker-compose.yaml up -d peer0.pr-bc0.thingagora.org
 ```
 
+```
+ssh blockchain@peer1.pr-bc0.thingagora.org
+tar xvzf peer_peer1_pr-bc0.thingagora.org.tgz
+docker-compose -f docker-compose.yaml up -d peer1.pr-bc0.thingagora.org
+```
+
 ### Start CLI container locally
 
 ```
@@ -120,10 +133,10 @@ docker-compose -f docker-compose.yaml up -d cli.pr-bc0.thingagora.org
 
 ## Network setup on a local machine
 
-### Start network locally with only one peer 
+### Start network locally with cli container only
 
 ```
-docker-compose -f docker-compose.yaml up -d ca.pr-bc0.thingagora.org orderer0.or-bc0.thingagora.org peer0.pr-bc0.thingagora.org cli.pr-bc0.thingagora.org
+docker-compose -f docker-compose.yaml up -d cli.pr-bc0.thingagora.org
 ```
 
 ### Use the CLI container environment
@@ -144,7 +157,7 @@ echo CHANNEL="sandbox" >> ../util/env
 echo CHAINCODE="ex02" >> ../util/env
 
 # override target peer if needed
-echo CORE_PEER_ADDRESS="peer0.${cli_ORGA}:7051" >> ../util/env
+echo CORE_PEER_ADDRESS="peer0.${cli_ORGA}:7151" >> ../util/env
 
 # Enter CLI environment
 docker exec -it cli-ThingagoraBC0Peer /bin/bash
@@ -175,6 +188,13 @@ peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["query","b"]}'
 ```
 exit
 ```
+
+### Start hyperledger explorer
+
+```
+docker-compose -f docker-compose.yaml up -d explorerdb.pr-bc0.thingagora.org explorer.pr-bc0.thingagora.org
+```
+
 
 ### Use the node.js SDK
 
@@ -243,7 +263,7 @@ docker-compose -f docker-compose.yaml up -d peer1.pr-bc0.thingagora.org
 
 ```
 # override target peer
-echo CORE_PEER_ADDRESS="peer1.${cli_ORGA}:7051" >> ../util/env
+echo CORE_PEER_ADDRESS="peer1.${cli_ORGA}:7151" >> ../util/env
 ```
 
   * Join existing channels
@@ -253,10 +273,10 @@ echo CORE_PEER_ADDRESS="peer1.${cli_ORGA}:7051" >> ../util/env
 docker exec -it cli-ThingagoraBC0Peer /bin/bash
 source /opt/blockchain-coop/env
 # Retrieve channel configuration from another peer
-CORE_PEER_ADDRESS="peer0.${cli_ORGA}:7051"
+CORE_PEER_ADDRESS="peer0.${cli_ORGA}:7151"
 peer channel fetch config ${CHANNEL}.block --channelID ${CHANNEL} -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CERT}
 # New peer now joins the channel
-CORE_PEER_ADDRESS="peer1.${cli_ORGA}:7051"
+CORE_PEER_ADDRESS="peer1.${cli_ORGA}:7151"
 peer channel join -b ${CHANNEL}.block
 ```
 
