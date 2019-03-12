@@ -326,11 +326,10 @@ services:
       - ADMIN_SECRET=
     volumes:
       - ./explorer-config/config.json:/opt/explorer/app/platform/fabric/config.json
-      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/users/Admin@pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/user
+      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/users/User1@pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/user
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer0.pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/peer0
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer1.pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/peer1
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/ca:/etc/hyperledger/pr-bc1.civis-blockchain.org/ca
-      - ./crypto-config/ordererOrganizations/bclan/tlsca:/etc/hyperledger/or-bc1.chain-ops.net/orderer
     command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
     ports:
       - 8080:8080
