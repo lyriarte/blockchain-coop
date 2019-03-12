@@ -314,7 +314,7 @@ services:
       - bc1net
 
   explorer.pr-bc1.civis-blockchain.org:
-    image: hyperledger/explorer:latest
+    image: civisblockchain/explorer:0.1.0
     container_name: explorer.pr-bc1.civis-blockchain.org
     hostname: explorer.pr-bc1.civis-blockchain.org
     environment:
