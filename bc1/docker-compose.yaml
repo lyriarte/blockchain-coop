@@ -309,7 +309,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ../util/explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
+      - ./explorer-config/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
     networks:
       - bc1net
 
