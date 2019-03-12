@@ -10,6 +10,7 @@ package main
 
 import (
 	"errors"
+	"strings"
 	"fmt"
 	"encoding/json"
 
@@ -147,6 +148,32 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "admin" {
 	// "admin", <admin name>
 		dat, err = stub.GetState("ADMIN_" + args[0])
+	} else 	if function == "list" {
+	// "list", <session|ssm|user|admin>
+		var lst []string
+		pre := strings.ToUpper(args[0]) + "_"
+		if args[0] == "session" {
+			pre = "STATE_"
+		}
+		itr, _ := stub.GetStateByRange(" ", "~")
+		defer itr.Close()
+		for itr.HasNext() {
+			key, _ := itr.Next()
+			if strings.HasPrefix(key.Key, pre) {
+				lst = append(lst, "\"" + strings.TrimPrefix(key.Key, pre) + "\"")
+			}
+		}
+		dat = []byte("[" + strings.Join(lst,",") + "]")
+	} else 	if function == "log" {
+	// "log", <session id>
+		var lst []string
+		itr, _ := stub.GetHistoryForKey("STATE_" + args[0])
+		defer itr.Close()
+		for itr.HasNext() {
+			key, _ := itr.Next()
+			lst = append(lst, "{\"txId\": \"" + key.GetTxId() + "\", \"state\": " + string(key.GetValue()) + "}")
+		}
+		dat = []byte("[" + strings.Join(lst,",") + "]")
 	} else {
 		return shim.Error(errmsg)
 	}
@@ -180,7 +207,12 @@ func (self *SSMChaincode) Register(stub shim.ChaincodeStubInterface, args []stri
 		return shim.Error(err.Error())
 	}
 	// Store user if not alreay existing
-	err = user.Put(stub, "USER_" + user.Name)
+	key := "USER_" + user.Name
+	err = self.CheckUnique(stub, key)
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}
+	err = user.Put(stub, key)
 	if (err != nil) {
 		return shim.Error(err.Error())
 	}
@@ -198,7 +230,12 @@ func (self *SSMChaincode) Create(stub shim.ChaincodeStubInterface, args []string
 		return shim.Error(err.Error())
 	}
 	// Store ssm if not alreay existing
-	err = ssm.Put(stub, "SSM_" + ssm.Name)
+	key := "SSM_" + ssm.Name
+	err = self.CheckUnique(stub, key)
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}	
+	err = ssm.Put(stub, key)
 	if (err != nil) {
 		return shim.Error(err.Error())
 	}
@@ -216,7 +253,12 @@ func (self *SSMChaincode) Start(stub shim.ChaincodeStubInterface, args []string)
 		return shim.Error(err.Error())
 	}
 	// Store state if not alreay existing
-	err = state.Put(stub, "STATE_" + state.Session)
+	key := "STATE_" + state.Session
+	err = self.CheckUnique(stub, key)
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}	
+	err = state.Put(stub, key)
 	if (err != nil) {
 		return shim.Error(err.Error())
 	}
@@ -297,6 +339,17 @@ func (self *SSMChaincode) Verify(stub shim.ChaincodeStubInterface, args []string
 	return verifier.Verify(message, args[argCount - 1])
 }	
 
+// ensure a key is not already in use
+func (self *SSMChaincode) CheckUnique(stub shim.ChaincodeStubInterface, key string) error {
+	data, err := stub.GetState(key);
+	if (err != nil) {
+		return err
+	}	
+	if (data != nil) {
+		return errors.New("Identifier " + key + " already in use.")
+	}
+	return nil
+}
 
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 //
