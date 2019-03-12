@@ -305,7 +305,7 @@ echo explorerdb__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | se
   * Generate archive
 
 ```
-../util/explorer-archive.sh pr-bc1.civis-blockchain.org User1 'peer0:pr-bc1.civis-blockchain.org;peer1:pr-bc1.civis-blockchain.org'
+../util/explorer-archive.sh pr-bc1.civis-blockchain.org User1 'peer0:pr-bc1.civis-blockchain.org,peer1:pr-bc1.civis-blockchain.org'
 ```
 
   * Deploy
@@ -317,7 +317,7 @@ ssh peer1.pr-bc1.civis-blockchain.org
 
 tar xvzf explorer__pr-bc1.civis-blockchain.org.tgz
 source .env
-docker-compose -f docker-compose.yaml up -d ca.bc-coop.bclan orderer.bclan peer0.bc-coop.bclan cli.bc-coop.bclan
+docker-compose -f docker-compose.yaml up -d explorer.pr-bc1.civis-blockchain.org explorerdb.pr-bc1.civis-blockchain.org
 ```
 
 

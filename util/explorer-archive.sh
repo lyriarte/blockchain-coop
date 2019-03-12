@@ -2,14 +2,14 @@
 
 if [ $# -ne 3 ]
 then
-    echo "Usage: `basename $0` <ORGA> <USER> <host:peer;> "
-    echo "Example: `basename $0` pr-bc1.civis-blockchain.org User1 'peer0:pr-bc1.civis-blockchain.org;peer1:pr-bc1.civis-blockchain.org' "
+    echo "Usage: `basename $0` <ORGA> <USER> <peer0:org0,peer1:org0,peerx:orgx...> "
+    echo "Example: `basename $0` pr-bc1.civis-blockchain.org User1 'peer0:pr-bc1.civis-blockchain.org,peer1:pr-bc1.civis-blockchain.org' "
     exit 1
 fi
 
 ORGA=$1
 USER=$2
-ORGAS_PEERS=$(echo $3 | tr ";" "\n")
+ORGAS_PEERS=$(echo $3 | tr "," "\n")
 
 CP_ARS=""
 for ORGA_PEER in $ORGAS_PEERS
