@@ -120,7 +120,7 @@ services:
       - DATABASE_USERNAME=${explorerdb__ADMIN}
       - DATABASE_PASSWORD=${explorerdb__PASSWD}
     volumes:
-      - ../util/explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
+      - ./explorer-config/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
     networks:
       - bclannet
 

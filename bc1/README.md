@@ -293,6 +293,34 @@ peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["query","b"]}'
 exit
 ```
 
+### Blockchain explorer
+
+  * Generate exploredb 
+
+```
+echo explorerdb__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo explorerdb__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+```
+
+  * Generate archive
+
+```
+../util/explorer-archive.sh pr-bc1.civis-blockchain.org User1 'peer0:pr-bc1.civis-blockchain.org,peer1:pr-bc1.civis-blockchain.org'
+```
+
+  * Deploy
+
+```
+scp explorer__pr-bc1.civis-blockchain.org.tgz blockchain@peer1.pr-bc1.civis-blockchain.org:
+
+ssh peer1.pr-bc1.civis-blockchain.org
+
+tar xvzf explorer__pr-bc1.civis-blockchain.org.tgz
+source .env
+docker-compose -f docker-compose.yaml up -d explorer.pr-bc1.civis-blockchain.org explorerdb.pr-bc1.civis-blockchain.org
+```
+
+
 ### Stop network and cleanup
 
 ```
