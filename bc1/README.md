@@ -340,4 +340,4 @@ git clean -fdx
 ```
 
 
-docker-compose -f ./docker-compose.yaml up coop-rest.pr-bc1.civis-blockchain.org
+docker-compose -f ./docker-compose.yaml up coop-rest-java.pr-bc1.civis-blockchain.org

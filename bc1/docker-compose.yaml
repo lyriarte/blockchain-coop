@@ -352,7 +352,6 @@ services:
     volumes:
       - ./config-java.json:/opt/rest-coop/config.json
       - ./crypto-config:/opt/rest-coop/crypto-config
-    command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
     ports:
       - 9090:9090
     networks:
