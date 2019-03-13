@@ -1,27 +1,14 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    ext {
-        springboot_version = '2.1.3.RELEASE'
-        kotlin_version = '1.3.21'
-    }
-    dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springboot_version"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
-    }
+plugins {
+    id 'org.springframework.boot' version '2.1.3.RELEASE'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.3.21'
 }
 
 repositories {
     maven {url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'}
 }
 
-apply plugin: 'kotlin'
-apply plugin: 'kotlin-spring'
-apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-
 
 dependencies {
     implementation project(":coop-core")

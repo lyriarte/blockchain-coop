@@ -1,13 +1,15 @@
 allprojects {
-//    apply plugin: 'idea'
-
-//    group = 'io.civis.ssm.core'
     version = '0.0.1-SNAPSHOT'
     
 }
 
-
 subprojects {
+
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
     repositories {
         mavenLocal()
         mavenCentral()
@@ -18,5 +20,17 @@ subprojects {
         jackson_version = '2.9.8'
         assertj_version = '3.12.0'
         junit_version = '5.4.0'
+    }
+
+    dependencies {
+        testImplementation "org.assertj:assertj-core:$assertj_version"
+        testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
     }
 }
