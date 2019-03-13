@@ -1,10 +1,18 @@
 
-## Docker
+## Build docker
 
 ```
 docker build -t civisblockchain/coop-rest .
-docker run -it -p 8080:8080 civisblockchain/coop-rest 
 docker push civisblockchain/coop-rest
+```
+
+## Run docker
+
+```
+echo ca__ADMIN=${ca__ADMIN} >> .env
+echo ca__PASSWD=${ca__PASSWD} >> .env
+
+docker-compose -f docker-compose.yaml up
 ```
 
 ## Build project
@@ -13,28 +21,28 @@ docker push civisblockchain/coop-rest
 ./gradlew build
 ```
 
-## String Rest api
+## Configuration
 
-Copy  config.json and crypto-config in coop-rest/src/main/resources/  
-Edit coop-rest/src/main/resources/
+In dev mode configuration can be change in coop-rest/src/main/resources/application.yml
 
-```
-coop:
-  user:
-    name: df82a3b46bda4183fb691fa9b57a39XX
-    password: 121a59e3882a7e7344333772a79df5XX
-    org: bclan
-```
+## Run
 
 ```
 ./gradlew coop-rest:bootRun
 ```
+
+## Swagger ui
+
+```
+http://localhost:9090/swagger-ui.html
+```
+
 ## Request Rest API
 
 ```
-curl -X GET "http://localhost:8081/ssm?args=a&function=query" -H  "accept: application/json"
+curl -X GET "http://localhost:9090/ssm?cmd=query&fcn=list&args=ssm" -H  "accept: application/json"
 ```
 
 ```
-curl -X POST "http://localhost:8081/ssm" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"channel\": \"sandbox\",  \"chainid\": \"ex02\",  \"function\": \"invoke\",  \"args\": [    \"a\",\"b\",\"10\"  ]}"
+curl -X GET "http://localhost:9090/ssm?cmd=query&fcn=admin&args=adrien" -H  "accept: application/json"
 ```
