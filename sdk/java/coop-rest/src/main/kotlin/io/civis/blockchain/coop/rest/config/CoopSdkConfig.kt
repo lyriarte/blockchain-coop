@@ -9,18 +9,18 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class CoopSdkConfig {
+class CoopSdkConfig(val coopConfig: CoopConfig) {
 
     @Bean
-    fun getFabricConfig(): FabricConfig = FabricConfig.loadFromFile("config.json")
+    fun getFabricConfig(): FabricConfig = FabricConfig.loadFromFile(coopConfig.configFile)
 
     @Bean
     fun getFabricClientFactory(fabricConfig: FabricConfig): FabricClientFactory
-            = FabricClientFactory.factory(fabricConfig)
+            = FabricClientFactory.factory(fabricConfig, coopConfig.configCryptoBase)
 
     @Bean
     fun getFabricChannelFactory(fabricConfig: FabricConfig): FabricChannelFactory
-            = FabricChannelFactory.factory(fabricConfig)
+            = FabricChannelFactory.factory(fabricConfig, coopConfig.configCryptoBase)
 
     @Bean
     fun getFabricChainCodeClient(fabricClientFactory: FabricClientFactory, fabricChannelFactory: FabricChannelFactory): FabricChainCodeClient

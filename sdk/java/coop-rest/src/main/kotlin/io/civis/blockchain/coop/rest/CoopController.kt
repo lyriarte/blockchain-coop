@@ -1,33 +1,44 @@
 package io.civis.blockchain.coop.rest
 
 import io.civis.blockchain.coop.core.FabricChainCodeClient
+import io.civis.blockchain.coop.core.FabricUserClient
 import io.civis.blockchain.coop.core.model.InvokeArgs
-import io.civis.blockchain.coop.rest.config.CoopUserConfig
+import io.civis.blockchain.coop.rest.config.CoopConfig
+import org.hyperledger.fabric.sdk.User
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/ssm",  produces = [MediaType.APPLICATION_JSON_VALUE])
-class CoopController(val fabricClient: FabricChainCodeClient, val coopUserConfig: CoopUserConfig) {
+class CoopController(val fabricClient: FabricChainCodeClient, val fabricUserClient: FabricUserClient, val coopConfig: CoopConfig) {
 
-    @PostMapping
-    @ResponseBody
+    @GetMapping
+//    @ResponseBody
+    fun query(cmd: String, fcn: String, args: Array<String>): String {
+        val user = enrollConfiguredUser();
+        return fabricClient.query(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
+    }
+
+
+    @PostMapping("v2")
+//    @ResponseBody
     fun command(@RequestBody params: InvokeParam): Mono<String> {
-        val user = coopUserConfig.enrollConfiguredUser();
-        val invokeArgs = InvokeArgs(params.function, params.args.iterator());
-        val future = fabricClient.invoke(user, coopUserConfig.userOrg, params.channel, params.chainid, invokeArgs);
+        val user = enrollConfiguredUser();
+        val invokeArgs = InvokeArgs(params.fcn, params.args.iterator());
+        val future = fabricClient.invoke(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, invokeArgs);
         return Mono.fromFuture(future).map{ it -> it.transactionID }
     }
 
-    @GetMapping
+    @GetMapping("v2")
     @ResponseBody
-    fun query(channel: String, chainid: String, function: String, args: Array<String>): String {
-        val user = coopUserConfig.enrollConfiguredUser();
-        return fabricClient.query(user, coopUserConfig.userOrg, channel, chainid, InvokeArgs(function, args.iterator()));
+    fun query(fcn: String, args: Array<String>): String {
+        val user = enrollConfiguredUser();
+        return fabricClient.query(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
     }
 
-    data class InvokeParam(val channel: String, val chainid: String,
-                           val function: String, val args: Array<String>);
+    fun enrollConfiguredUser(): User = fabricUserClient.enroll(coopConfig.userName, coopConfig.userPassword, coopConfig.userOrg)
+
+    data class InvokeParam(val fcn: String, val args: Array<String>);
 
 }

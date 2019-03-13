@@ -11,9 +11,9 @@ import java.io.IOException;
 
 public class FabricUserClient {
 
-    public static FabricUserClient fromConfigFile(String filename) throws IOException {
+    public static FabricUserClient fromConfigFile(String filename, String cryptoConfigBase) throws IOException {
         FabricConfig fabricConfig = FabricConfig.loadFromFile(filename);
-        FabricClientFactory clientFactoty = FabricClientFactory.factory(fabricConfig);
+        FabricClientFactory clientFactoty = FabricClientFactory.factory(fabricConfig, cryptoConfigBase);
         return new FabricUserClient(fabricConfig, clientFactoty);
     }
 

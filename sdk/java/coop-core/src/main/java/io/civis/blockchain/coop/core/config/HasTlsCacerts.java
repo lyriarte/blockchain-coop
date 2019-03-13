@@ -1,5 +1,6 @@
 package io.civis.blockchain.coop.core.config;
 
+import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 
 import java.io.IOException;
@@ -10,14 +11,18 @@ public interface HasTlsCacerts {
 
     String getTlsCacerts();
 
-    default URL getTlsCacertsAsUrl() {
-        return Resources.getResource(getTlsCacerts());
+    default URL getTlsCacertsAsUrl(String cryptoBase) {
+        if (!Strings.isNullOrEmpty(cryptoBase) && !cryptoBase.endsWith("/")) {
+            cryptoBase = cryptoBase + "/";
+        }
+        String baseTlsCacerts = cryptoBase + getTlsCacerts();
+        return Resources.getResource(baseTlsCacerts);
     }
 
-    default Properties getPeerTlsProperties() throws IOException {
+    default Properties getPeerTlsProperties(String cryptoBase) throws IOException {
         Properties prop = new Properties();
         prop.setProperty("allowAllHostNames", "true");
-        URL path = getTlsCacertsAsUrl();
+        URL path = getTlsCacertsAsUrl(cryptoBase);
         prop.setProperty("pemFile", path.getFile());
         return prop;
     }

@@ -9,14 +9,16 @@ import org.hyperledger.fabric_ca.sdk.HFCAClient;
 
 public class FabricClientFactory {
 
-    private static FabricConfig fabricConfig;
+    private String cryptoConfigBase;
+    private FabricConfig fabricConfig;
 
-    public FabricClientFactory(FabricConfig fabricConfig) {
+    public FabricClientFactory(FabricConfig fabricConfig, String cryptoConfigBase) {
         this.fabricConfig = fabricConfig;
+        this.cryptoConfigBase = cryptoConfigBase;
     }
 
-    public static FabricClientFactory factory(FabricConfig fabricConfig) {
-        return new FabricClientFactory(fabricConfig);
+    public static FabricClientFactory factory(FabricConfig fabricConfig, String cryptoConfigBase) {
+        return new FabricClientFactory(fabricConfig, cryptoConfigBase);
     }
 
     public HFClient getHfClient() throws Exception {
@@ -29,7 +31,7 @@ public class FabricClientFactory {
     public HFCAClient getHfCaClient(String orgName) throws Exception {
         OrganisationConfig config = fabricConfig.getNetwork().getOrganisation(orgName);
         CryptoSuite cryptoSuite = CryptoSuite.Factory.getCryptoSuite();
-        HFCAClient caClient = HFCAClient.createNewInstance(config.getCa().getUrl(), config.getCa().getPeerTlsProperties());
+        HFCAClient caClient = HFCAClient.createNewInstance(config.getCa().getUrl(), config.getCa().getPeerTlsProperties(cryptoConfigBase));
         caClient.setCryptoSuite(cryptoSuite);
         return caClient;
     }

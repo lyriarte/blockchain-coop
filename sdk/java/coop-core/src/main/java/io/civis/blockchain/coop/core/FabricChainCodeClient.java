@@ -3,6 +3,7 @@ package io.civis.blockchain.coop.core;
 import io.civis.blockchain.coop.core.config.FabricConfig;
 import io.civis.blockchain.coop.core.factory.FabricChannelFactory;
 import io.civis.blockchain.coop.core.factory.FabricClientFactory;
+import io.civis.blockchain.coop.core.model.Endorser;
 import io.civis.blockchain.coop.core.model.InvokeArgs;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -10,14 +11,15 @@ import org.hyperledger.fabric.sdk.exception.ProposalException;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class FabricChainCodeClient {
 
-    public static FabricChainCodeClient fromConfigFile(String filename) throws IOException {
+    public static FabricChainCodeClient fromConfigFile(String filename, String cryptoConfigBase) throws IOException {
         FabricConfig fabricConfig = FabricConfig.loadFromFile(filename);
-        FabricClientFactory clientFactoty = FabricClientFactory.factory(fabricConfig);
-        FabricChannelFactory channelFactory = FabricChannelFactory.factory(fabricConfig);
+        FabricClientFactory clientFactoty = FabricClientFactory.factory(fabricConfig, cryptoConfigBase);
+        FabricChannelFactory channelFactory = FabricChannelFactory.factory(fabricConfig, cryptoConfigBase);
         return new FabricChainCodeClient(clientFactoty, channelFactory);
     }
 
@@ -30,16 +32,16 @@ public class FabricChainCodeClient {
         this.channelFactory = channelFactory;
     }
 
-    public CompletableFuture<BlockEvent.TransactionEvent> invoke(User user, String orgName, String channelName, String chainId, InvokeArgs invokeArgs) throws Exception {
+    public CompletableFuture<BlockEvent.TransactionEvent> invoke(List<Endorser> endorsers, User user, String channelName, String chainId, InvokeArgs invokeArgs) throws Exception {
         HFClient client = clientFactoty.getHfClient(user);
-        Channel channel = channelFactory.getChannel(client, orgName, channelName);
+        Channel channel = channelFactory.getChannel(endorsers, client, channelName);
         ChaincodeID chanCodeId = ChaincodeID.newBuilder().setName(chainId).build();
         return invokeBlockChain(client, channel, chanCodeId, invokeArgs);
     }
 
-    public String query(User user, String orgName, String channelName, String chainId, InvokeArgs invokeArgs) throws Exception {
+    public String query(List<Endorser> endorsers, User user, String channelName, String chainId, InvokeArgs invokeArgs) throws Exception {
         HFClient client = clientFactoty.getHfClient(user);
-        Channel channel = channelFactory.getChannel(client, orgName, channelName);
+        Channel channel = channelFactory.getChannel(endorsers, client, channelName);
         ChaincodeID chanCodeId = ChaincodeID.newBuilder().setName(chainId).build();
         return queryBlockChain(client, channel, chanCodeId, invokeArgs);
     }

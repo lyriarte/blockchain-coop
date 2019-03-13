@@ -6,8 +6,8 @@ import java.util.StringJoiner;
 
 public class NetworkConfig {
 
-    OrdererConfig orderer;
-    Map<String, OrganisationConfig> organisations;
+    private OrdererConfig orderer;
+    private Map<String, OrganisationConfig> organisations;
 
     public NetworkConfig() {
     }

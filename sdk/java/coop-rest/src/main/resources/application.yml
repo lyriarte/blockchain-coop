@@ -1,8 +1,15 @@
 coop:
+  channel: sandbox
+  ccid: ssm
   user:
-    name:
-    password:
-    org:
+    name: df82a3b46bda4183fb691fa9b57a39b8
+    password: 121a59e3882a7e7344333772a79df5cc
+    org: bclan
+  endorsers: peer0:bclan
+  config:
+    file: config.json
+    crypto: crypto-config
+
 
 server:
-  port : 8081
+  port : 9090
