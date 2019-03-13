@@ -1,4 +1,11 @@
 
+## Docker
+
+```
+docker build -t civisblockchain/coop-rest .
+docker run -it -p 8080:8080 civisblockchain/coop-rest 
+```
+
 ## Build project
 
 ```
@@ -24,7 +31,7 @@ coop:
 ## Request Rest API
 
 ```
-curl -X GET "http://localhost:8081/ssm?args=a&chainid=ex02&channel=sandbox&function=query" -H  "accept: application/json"
+curl -X GET "http://localhost:8081/ssm?args=a&function=query" -H  "accept: application/json"
 ```
 
 ```
