@@ -4,6 +4,7 @@
 ```
 docker build -t civisblockchain/coop-rest .
 docker run -it -p 8080:8080 civisblockchain/coop-rest 
+docker push civisblockchain/coop-rest
 ```
 
 ## Build project

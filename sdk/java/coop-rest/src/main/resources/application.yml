@@ -2,14 +2,13 @@ coop:
   channel: sandbox
   ccid: ssm
   user:
-    name: df82a3b46bda4183fb691fa9b57a39b8
-    password: 121a59e3882a7e7344333772a79df5cc
-    org: bclan
-  endorsers: peer0:bclan
+    name:
+    password:
+    org: CivisBlockchain
+  endorsers: peer0:CivisBlockchain,peer1:CivisBlockchain
   config:
-    file: config.json
-    crypto: crypto-config
-
+    file: file:/Users/apo/dev/smartb/git/blockchain-project/blockchain-coop/bc1/config-java.json
+    crypto: file:/Users/apo/dev/smartb/git/blockchain-project/blockchain-coop/bc1
 
 server:
-  port : 9090
+  port : 909

@@ -2,8 +2,10 @@ package io.civis.blockchain.coop.core.config;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
+import io.civis.blockchain.coop.core.utils.FileUtils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -11,12 +13,12 @@ public interface HasTlsCacerts {
 
     String getTlsCacerts();
 
-    default URL getTlsCacertsAsUrl(String cryptoBase) {
+    default URL getTlsCacertsAsUrl(String cryptoBase) throws MalformedURLException {
         if (!Strings.isNullOrEmpty(cryptoBase) && !cryptoBase.endsWith("/")) {
             cryptoBase = cryptoBase + "/";
         }
         String baseTlsCacerts = cryptoBase + getTlsCacerts();
-        return Resources.getResource(baseTlsCacerts);
+        return FileUtils.getUrl(baseTlsCacerts);
     }
 
     default Properties getPeerTlsProperties(String cryptoBase) throws IOException {

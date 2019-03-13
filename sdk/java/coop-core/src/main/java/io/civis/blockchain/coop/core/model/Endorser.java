@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 public class Endorser {
 
     public static Endorser fromStringPair(String pair) {
-        List<String> endorser = Splitter.on(pair).splitToList(":");
+        List<String> endorser = Splitter.on(":").splitToList(pair);
         return new Endorser(endorser.get(0), endorser.get(1));
     }
 

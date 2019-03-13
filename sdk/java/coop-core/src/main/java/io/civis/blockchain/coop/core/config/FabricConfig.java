@@ -1,5 +1,6 @@
 package io.civis.blockchain.coop.core.config;
 
+import io.civis.blockchain.coop.core.utils.FileUtils;
 import io.civis.blockchain.coop.core.utils.JsonUtils;
 
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.util.StringJoiner;
 public class FabricConfig {
 
     public static FabricConfig loadFromFile(String filename) throws IOException {
-        URL file = FabricConfig.class.getClassLoader().getResource(filename);
+        URL file = FileUtils.getUrl(filename);
         return JsonUtils.toObject(file, FabricConfig.class);
     }
 

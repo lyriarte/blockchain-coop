@@ -35,7 +35,7 @@ class CoopConfig {
     lateinit var configCryptoBase: String
 
     fun getEndorsers(): List<Endorser> {
-        return Splitter.on(endorsers).split(",").map {
+        return Splitter.on(",").split(endorsers).map {
             Endorser.fromStringPair(it)
         }
     }

@@ -44,9 +44,9 @@ public class FabricChannelFactory {
             OrganisationConfig orgConfig = fabricConfig.getNetwork().getOrganisation(endorser.getOrganisation());
             PeerConfig peerConfig = orgConfig.getPeers().get(endorser.getPeer());
 
-            EventHub eventHub = client.newEventHub(peerConfig.getServerHostname(), peerConfig.getEvents());
+//            EventHub eventHub = client.newEventHub(peerConfig.getServerHostname(), peerConfig.getEvents());
             Peer peer = client.newPeer(peerConfig.getServerHostname(), peerConfig.getRequests(), peerConfig.getPeerTlsProperties(cryptoConfigBase));
-            channel.addEventHub(eventHub);
+//            channel.addEventHub(eventHub);
             channel.addPeer(peer);
         }
     }
