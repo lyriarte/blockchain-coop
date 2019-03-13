@@ -320,6 +320,14 @@ source .env
 docker-compose -f docker-compose.yaml up -d explorer.pr-bc1.civis-blockchain.org explorerdb.pr-bc1.civis-blockchain.org
 ```
 
+### Java Coop Rest
+
+```
+docker-compose -f ./docker-compose.yaml up coop-rest.pr-bc1.civis-blockchain.org
+```
+
+Go to `http://localhost:9090/swagger-ui.html`
+
 
 ### Stop network and cleanup
 
@@ -332,3 +340,4 @@ git clean -fdx
 ```
 
 
+docker-compose -f ./docker-compose.yaml up coop-rest.pr-bc1.civis-blockchain.org
