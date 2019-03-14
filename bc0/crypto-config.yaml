@@ -16,3 +16,11 @@ PeerOrgs:
       Count: 2
     Users:
       Count: 1
+  - Name: OpenflowBC0Peer
+    Domain: pr-bc0.openflow.legal
+    CA:
+       Hostname: ca
+    Template:
+      Count: 2
+    Users:
+      Count: 1

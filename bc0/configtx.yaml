@@ -27,10 +27,61 @@ Organizations:
       AnchorPeers:
         - Host: peer0.pr-bc0.thingagora.org
           Port: 7151
+  - &OpenflowBC0Peer
+      Name: OpenflowBC0Peer
+      ID: OpenflowBC0PeerMSP
+      MSPDir: crypto-config/peerOrganizations/pr-bc0.openflow.legal/msp
+      Policies: *BlockchainCoopDefaults
+      AnchorPeers:
+        - Host: peer0.pr-bc0.openflow.legal
+          Port: 7151
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V1_3: true
+
+    Orderer: &OrdererCapabilities
+        V1_1: true
+
+    Application: &ApplicationCapabilities
+        V1_3: true
+        V1_2: false
+        V1_1: false
 
 Application: &ApplicationDefaults
+    ACLs: &ACLsDefault
+        lscc/ChaincodeExists: /Channel/Application/Readers
+        lscc/GetDeploymentSpec: /Channel/Application/Readers
+        lscc/GetChaincodeData: /Channel/Application/Readers
+        lscc/GetInstantiatedChaincodes: /Channel/Application/Readers
+        qscc/GetChainInfo: /Channel/Application/Readers
+        qscc/GetBlockByNumber: /Channel/Application/Readers
+        qscc/GetBlockByHash: /Channel/Application/Readers
+        qscc/GetTransactionByID: /Channel/Application/Readers
+        qscc/GetBlockByTxID: /Channel/Application/Readers
+        cscc/GetConfigBlock: /Channel/Application/Readers
+        cscc/GetConfigTree: /Channel/Application/Readers
+        cscc/SimulateConfigTreeUpdate: /Channel/Application/Readers
+        peer/Propose: /Channel/Application/Writers
+        peer/ChaincodeToChaincode: /Channel/Application/Readers
+        event/Block: /Channel/Application/Readers
+        event/FilteredBlock: /Channel/Application/Readers
+
     Organizations:
-    Policies: *BlockchainCoopDefaults
+
+    Policies: &ApplicationDefaultPolicies
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+    Capabilities:
+        <<: *ApplicationCapabilities
 
 Orderer: &OrdererDefaults
     OrdererType: solo
@@ -45,6 +96,12 @@ Orderer: &OrdererDefaults
     Organizations:
     Policies: *BlockchainCoopDefaults
 
+Channel: &ChannelDefaults
+    Policies:
+        <<: *ApplicationDefaultPolicies
+    Capabilities:
+        <<: *ChannelCapabilities
+
 Profiles:
     ThingagoraBC0OrdererGenesis:
         Orderer:
@@ -54,11 +111,22 @@ Profiles:
         Consortiums:
             BlockchainCoopBC0Consortium:
                 Organizations:
-                    - *ThingagoraBC0Peer
+                    - <<: *ThingagoraBC0Peer
+                      Policies:
+                          <<: *ApplicationDefaultPolicies
+                    - <<: *OpenflowBC0Peer
+                      Policies:
+                          <<: *ApplicationDefaultPolicies
 
     BlockchainCoopBC0PeerChannels:
+        <<: *ChannelDefaults
         Consortium: BlockchainCoopBC0Consortium
         Application:
             <<: *ApplicationDefaults
             Organizations:
-                - *ThingagoraBC0Peer
+               - <<: *ThingagoraBC0Peer
+                 Policies:
+                     <<: *ApplicationDefaultPolicies
+               - <<: *OpenflowBC0Peer
+                 Policies:
+                     <<: *ApplicationDefaultPolicies
