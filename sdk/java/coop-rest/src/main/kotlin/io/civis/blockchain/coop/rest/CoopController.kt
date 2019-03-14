@@ -14,7 +14,6 @@ import reactor.core.publisher.Mono
 class CoopController(val fabricClient: FabricChainCodeClient, val fabricUserClient: FabricUserClient, val coopConfig: CoopConfig) {
 
     @GetMapping
-//    @ResponseBody
     fun query(cmd: String, fcn: String, args: Array<String>): String {
         val user = enrollConfiguredUser();
         return fabricClient.query(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
@@ -22,7 +21,6 @@ class CoopController(val fabricClient: FabricChainCodeClient, val fabricUserClie
 
 
     @PostMapping("v2")
-//    @ResponseBody
     fun command(@RequestBody params: InvokeParam): Mono<String> {
         val user = enrollConfiguredUser();
         val invokeArgs = InvokeArgs(params.fcn, params.args.iterator());
@@ -31,7 +29,6 @@ class CoopController(val fabricClient: FabricChainCodeClient, val fabricUserClie
     }
 
     @GetMapping("v2")
-    @ResponseBody
     fun query(fcn: String, args: Array<String>): String {
         val user = enrollConfiguredUser();
         return fabricClient.query(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
