@@ -287,3 +287,50 @@ peer chaincode install -n ${CHAINCODE} -v 1.0 -p blockchain-coop/go/chaincode_ex
 # Chaincode is already instantiated, a query will spawn it on the new peer
 peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["query","a"]}'
 ```
+
+## Add OpenflowBC0Peer org
+
+```
+cli_ORGA=pr-bc0.thingagora.org
+echo cli_ORGA=${cli_ORGA} > ../util/env
+echo ORDERER_ADDR="orderer0.or-bc0.thingagora.org:7050" >> ../util/env
+echo ORDERER_CERT="/etc/hyperledger/orderer/tlsca.or-bc0.thingagora.org-cert.pem" >> ../util/env
+echo CHANNEL="sandbox" >> ../util/env
+
+docker exec -it cli-ThingagoraBC0Peer /bin/bash
+```
+
+```
+source /opt/blockchain-coop/env
+peer channel fetch config ${CHANNEL}.tx -o ${ORDERER_ADDR} -c ${CHANNEL} --tls --cafile ${ORDERER_CERT}
+
+exit
+```
+
+
+```
+docker cp cli-ThingagoraBC0Peer:/opt/gopath/src/github.com/hyperledger/fabric/peer/sandbox.tx .
+configtxlator proto_decode --input sandbox.tx --type common.Block > sandbox.json
+configtxlator proto_decode --input sandbox.tx --type common.Block | jq .data.data[0].payload.data.config > sandbox_config.json
+jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {"OpenflowBC0Peer":.[1]}}}}}' sandbox_config.json OpenflowBC0Peer.json > sandbox_modified_config.json
+configtxlator proto_encode --input sandbox_config.json --type common.Config --output sandbox_config.tx
+configtxlator proto_encode --input sandbox_modified_config.json --type common.Config --output sandbox_modified_config.tx
+configtxlator compute_update --channel_id sandbox --original sandbox_config.tx --updated sandbox_modified_config.tx --output OpenflowBC0Peer_update.tx
+configtxlator proto_decode --input OpenflowBC0Peer_update.tx --type common.ConfigUpdate | jq . > OpenflowBC0Peer_update.json
+echo '{"payload":{"header":{"channel_header":{"channel_id":"sandbox", "type":2}},"data":{"config_update":'$(cat OpenflowBC0Peer_update.json)'}}}' | jq . > OpenflowBC0Peer_update_in_enveloppe.json
+cat OpenflowBC0Peer_update_in_enveloppe.json
+configtxlator proto_encode --input OpenflowBC0Peer_update_in_enveloppe.json --type common.Envelope --output OpenflowBC0Peer_update_in_enveloppe.pb
+docker cp OpenflowBC0Peer_update_in_enveloppe.pb cli-ThingagoraBC0Peer:/opt/gopath/src/github.com/hyperledger/fabric/peer
+docker exec -it cli-ThingagoraBC0Peer /bin/bash
+```
+
+```
+source /opt/blockchain-coop/env 
+peer channel signconfigtx -f OpenflowBC0Peer_update_in_enveloppe.pb 
+
+exit
+```
+
+```
+docker cp cli-ThingagoraBC0Peer:/opt/gopath/src/github.com/hyperledger/fabric/peer/OpenflowBC0Peer_update_in_enveloppe.pb OpenflowBC0Peer_update_in_enveloppe_signed_1.pb
+```
