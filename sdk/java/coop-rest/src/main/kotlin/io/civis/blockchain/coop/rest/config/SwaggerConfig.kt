@@ -12,7 +12,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux
 
 @Configuration
 @EnableSwagger2WebFlux
-class SwaggerConfig : WebFluxConfigurer {
+class SwaggerConfig {
 
     @Bean
     fun api(): Docket {
@@ -23,12 +23,6 @@ class SwaggerConfig : WebFluxConfigurer {
                 .build()
     }
 
-    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("/swagger-ui.html**")
-                .addResourceLocations("classpath:/META-INF/resources/")
 
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/")
-    }
 
 }

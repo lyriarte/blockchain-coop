@@ -10,13 +10,19 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/ssm",  produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/",  produces = [MediaType.APPLICATION_JSON_VALUE])
 class CoopController(val fabricClient: FabricChainCodeClient, val fabricUserClient: FabricUserClient, val coopConfig: CoopConfig) {
 
     @GetMapping
-    fun query(cmd: String, fcn: String, args: Array<String>): String {
+    fun query(cmd: String, fcn: String, args: Array<String>): Mono<String> {
         val user = enrollConfiguredUser();
-        return fabricClient.query(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
+        if("invoke".equals(cmd)) {
+            val future =  fabricClient.invoke(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()))
+            return Mono.fromFuture(future).map{ it -> it.transactionID }
+        } else {
+            val value = fabricClient.query(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
+            return Mono.just(value);
+        }
     }
 
 
