@@ -1,8 +1,6 @@
 package io.civis.blockchain.coop.core.utils;
 
-import com.google.common.base.Strings;
 import com.google.common.io.Resources;
-import io.civis.blockchain.coop.core.config.FabricConfig;
 
 import java.net.MalformedURLException;
 import java.net.URL;

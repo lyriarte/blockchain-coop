@@ -31,7 +31,9 @@ class CoopController(val fabricClient: FabricChainCodeClient, val fabricUserClie
         val user = enrollConfiguredUser();
         val invokeArgs = InvokeArgs(params.fcn, params.args.iterator());
         val future = fabricClient.invoke(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, invokeArgs);
-        return Mono.fromFuture(future).map{ it -> it.transactionID }
+        return Mono.fromFuture(future).map{
+            it -> it.transactionID
+        }
     }
 
     @GetMapping("v2")
