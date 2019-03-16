@@ -49,7 +49,8 @@ context.org = context.endorsers[0].org;
 
 var errHandler = function(err) {
 	console.log(err.stack ? err.stack : err);
-	httpResHandler(this.res, {"error": "blockchain call error"});
+	result = err.toString ? err.toString() : "Error: blockchain call failure";
+	httpResHandler(this.res, result);
 };
 
 var successHandler = function(msg) {
@@ -85,12 +86,19 @@ var httpResHandler = function(res, result) {
 		'Content-Type': 'application/json', 
 		'Access-Control-Allow-Origin': '*'}
 	);
-	res.write(JSON.stringify(result));
+	str = null;
+	try {
+		str = JSON.stringify(result);
+	}
+	catch (error) {
+		str = result;
+	}
+	res.write(str);
 	res.end();
 }
 
 var httpReqHandler = function(req, res) {
-	var result = {"error": "generic error"};
+	var result = "Error: generic error";
 	var reqArgs = url.parse(req.url, true).query;
 	var command = reqArgs.cmd;
 	context.fcn = reqArgs.fcn;
@@ -102,8 +110,7 @@ var httpReqHandler = function(req, res) {
 		cbctx.res = res;
 	}
 	catch(err) {
-		result = {"error": "blockchain call failure"};
-		httpResHandler(res, result);
+		errHandler(err);
 	}
 }
 
