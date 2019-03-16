@@ -371,7 +371,12 @@ BlockchainCoop.prototype.invoke = function(user, endorsers, channel, ccid, fcn, 
 	).then(function(response) {
 		cbctx.onOk(response);
 	},
-	cbctx.onError);
+	function(error) {
+		if (error && error.toString())
+			cbctx.onError(error.toString());
+		else
+			cbctx.onError("Error: invoke failure");
+	});
 
 	return cbctx;
 };
