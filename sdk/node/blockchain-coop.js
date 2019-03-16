@@ -240,11 +240,27 @@ BlockchainCoop.prototype.query = function(user, peer, org, channel, ccid, fcn, a
 // Got query results
 	).then(function(payloads) {
 		results = [];
-		payloads.map((payload) => {
-			str = Buffer.from(payload).toString();
-			if (str) 
-				results.push(JSON.parse(str));
-		});
+		function addPayload(payload) {
+			var str = null;
+			if (Buffer.isBuffer(payload))
+				str = Buffer.from(payload).toString();
+			else if (payload.toString)
+				str = payload.toString();
+			if (str) {
+				if (str.indexOf("Error:") == 0)
+					cbctx.onError(str);
+				else {
+					try {
+						obj = JSON.parse(str);
+						results.push(obj);
+					}
+					catch (error) {
+						results.push(str);
+					}
+				}
+			}
+		}
+		payloads.map(addPayload);
 		var result = results;
 		if (result.length == 0)
 			result = null;
@@ -252,7 +268,12 @@ BlockchainCoop.prototype.query = function(user, peer, org, channel, ccid, fcn, a
 			result = results.pop()
 		cbctx.onOk(result);
 	},
-	cbctx.onError);
+	function(error) {
+		if (error && error.toString())
+			cbctx.onError(error.toString());
+		else
+			cbctx.onError("Error: query failure");
+	});
 
 	return cbctx;
 };
