@@ -13,7 +13,7 @@ services:
       - coop_config_crypto=file:/opt/rest-coop
       - coop_endorsers=peer0:CivisBlockchain,peer1:CivisBlockchain
     volumes:
-      - ../../bc1/config-java.json:/opt/rest-coop/config.json
+      - ../../bc1/config.json:/opt/rest-coop/config.json
       - ../../bc1/crypto-config:/opt/rest-coop/crypto-config
     ports:
       - 9090:9090

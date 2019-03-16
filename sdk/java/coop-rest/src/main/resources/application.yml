@@ -7,8 +7,8 @@ coop:
     org: CivisBlockchain
   endorsers: peer0:CivisBlockchain,peer1:CivisBlockchain
   config:
-    file: file:/Users/apo/dev/smartb/git/blockchain-project/blockchain-coop/bc1/config-java.json
+    file: file:/Users/apo/dev/smartb/git/blockchain-project/blockchain-coop/bc1/config.json
     crypto: file:/Users/apo/dev/smartb/git/blockchain-project/blockchain-coop/bc1
 
 server:
-  port : 909
+  port : 9090
