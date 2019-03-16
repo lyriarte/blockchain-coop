@@ -117,8 +117,7 @@ var url = require('url');
 
 var srvr = http.createServer(httpReqHandler)
 http.createServer(httpReqHandler)
+console.log("Starting REST server on port " + context.port);
 
 srvr.listen(context.port);
-
-
 
