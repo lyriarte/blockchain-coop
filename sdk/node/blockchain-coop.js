@@ -97,7 +97,7 @@ BlockchainCoop.prototype.check = function(user, cbctx) {
 BlockchainCoop.prototype.enroll = function(user, password, org, cbctx) {
 	var self = this;
 	var hfcUser = new self.User(user);
-	var hfcOrg = self.ORGS[org];
+	var hfcOrg = self.ORGS.organisations[org];
 	var req = {
 		enrollmentID: user,
 		enrollmentSecret: password
@@ -150,7 +150,7 @@ BlockchainCoop.prototype.enroll = function(user, password, org, cbctx) {
 BlockchainCoop.prototype.register = function(user, password, org, newuser, newpass, cbctx) {
 	var self = this;
 	var hfcUser = new self.User(user);
-	var hfcOrg = self.ORGS[org];
+	var hfcOrg = self.ORGS.organisations[org];
 	var req = {
 		enrollmentID: user,
 		enrollmentSecret: password
@@ -197,7 +197,7 @@ BlockchainCoop.prototype.register = function(user, password, org, newuser, newpa
 
 BlockchainCoop.prototype.query = function(user, peer, org, channel, ccid, fcn, args, cbctx) {
 	var self = this;
-	var hfcOrg = self.ORGS[org];
+	var hfcOrg = self.ORGS.organisations[org];
 	// Create a keyVal store
 	self.hfc.newDefaultKeyValueStore({path: self.kvsPath})
 		.then(function(kvs) {
@@ -219,12 +219,12 @@ BlockchainCoop.prototype.query = function(user, peer, org, channel, ccid, fcn, a
 // User enrolled
 	).then(function(userCtx) {
 		var hfcChannel = self.client.newChannel(channel);
-		var tls_cacertsBuf = self.fs.readFileSync(hfcOrg[peer].tls_cacerts);
+		var tlsCacertsBuf = self.fs.readFileSync(hfcOrg.peers[peer].tlsCacerts);
 		var hfcPeer = self.client.newPeer(
-			hfcOrg[peer].requests,
+			hfcOrg.peers[peer].requests,
 			{
-				'pem': Buffer.from(tls_cacertsBuf).toString(),
-				'ssl-target-name-override': hfcOrg[peer]['server-hostname']
+				'pem': Buffer.from(tlsCacertsBuf).toString(),
+				'ssl-target-name-override': hfcOrg.peers[peer]['serverHostname']
 			}
 		);
 		hfcChannel.addPeer(hfcPeer);
@@ -299,12 +299,12 @@ BlockchainCoop.prototype.invoke = function(user, endorsers, channel, ccid, fcn, 
 
 	// Peer info management utility
 	var peerInfoSetProxy = function(peerInfo) {
-		var tls_cacertsBuf = self.fs.readFileSync(self.ORGS[peerInfo.org][peerInfo.peer].tls_cacerts);
+		var tlsCacertsBuf = self.fs.readFileSync(self.ORGS.organisations[peerInfo.org].peers[peerInfo.peer].tlsCacerts);
 		peerInfo.peerProxy = self.client.newPeer(
-			self.ORGS[peerInfo.org][peerInfo.peer].requests,
+			self.ORGS.organisations[peerInfo.org].peers[peerInfo.peer].requests,
 			{
-				'pem': Buffer.from(tls_cacertsBuf).toString(),
-				'ssl-target-name-override': self.ORGS[peerInfo.org][peerInfo.peer]['server-hostname']
+				'pem': Buffer.from(tlsCacertsBuf).toString(),
+				'ssl-target-name-override': self.ORGS.organisations[peerInfo.org].peers[peerInfo.peer]['serverHostname']
 			}
 		);
 	}
@@ -330,12 +330,12 @@ BlockchainCoop.prototype.invoke = function(user, endorsers, channel, ccid, fcn, 
 // User enrolled
 	).then(function(userCtx) {
 		hfcChannel = self.client.newChannel(channel);
-		var tls_cacertsBuf = self.fs.readFileSync(self.ORGS.orderer.tls_cacerts);
+		var tlsCacertsBuf = self.fs.readFileSync(self.ORGS.orderer.tlsCacerts);
 		var orderer = self.client.newOrderer(
 			self.ORGS.orderer.url, 
 			{
-				'pem': Buffer.from(tls_cacertsBuf).toString(),
-				'ssl-target-name-override': self.ORGS.orderer['server-hostname']
+				'pem': Buffer.from(tlsCacertsBuf).toString(),
+				'ssl-target-name-override': self.ORGS.orderer['serverHostname']
 			}
 		);
 		hfcChannel.addOrderer(orderer);

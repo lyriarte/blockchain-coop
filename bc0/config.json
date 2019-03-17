@@ -2,28 +2,34 @@
 	"network": {
 		"orderer": {
 			"url": "grpcs://orderer0.or-bc0.thingagora.org:7050",
-			"server-hostname": "orderer0",
-			"tls_cacerts": "crypto-config/ordererOrganizations/or-bc0.thingagora.org/orderers/orderer0.or-bc0.thingagora.org/msp/tlscacerts/tlsca.or-bc0.thingagora.org-cert.pem"
+			"serverHostname": "orderer0",
+			"tlsCacerts": "crypto-config/ordererOrganizations/or-bc0.thingagora.org/orderers/orderer0.or-bc0.thingagora.org/msp/tlscacerts/tlsca.or-bc0.thingagora.org-cert.pem"
 		},
-		"bc0": {
-			"name": "ThingagoraBC0Peer",
-			"mspid": "ThingagoraBC0PeerMSP",
-			"ca": {
-				"url": "https://ca.pr-bc0.thingagora.org:7054",
-				"name": "ca"
-			},
-			"peer0": {
-				"requests": "grpcs://peer0.pr-bc0.thingagora.org:7151",
-				"events": "grpcs://peer0.pr-bc0.thingagora.org:7153",
-				"server-hostname": "peer0.pr-bc0.thingagora.org",
-				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer0.pr-bc0.thingagora.org/msp/tlscacerts/tlsca.pr-bc0.thingagora.org-cert.pem"
-			},
-			"peer1": {
-				"requests": "grpcs://peer1.pr-bc0.thingagora.org:7151",
-				"events": "grpcs://peer1.pr-bc0.thingagora.org:7153",
-				"server-hostname": "peer1.pr-bc0.thingagora.org",
-				"tls_cacerts": "crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer1.pr-bc0.thingagora.org/msp/tlscacerts/tlsca.pr-bc0.thingagora.org-cert.pem"
+		"organisations": {
+			"bc0": {
+				"name": "ThingagoraBC0Peer",
+				"mspid": "ThingagoraBC0PeerMSP",
+				"ca": {
+					"url": "https://ca.pr-bc0.thingagora.org:7054",
+					"name": "ca",
+					"tlsCacerts": "crypto-config/peerOrganizations/pr-bc0.thingagora.org/users/User1@pr-bc0.thingagora.org/msp/tls/ca.crt"
+				},
+				"peers": {
+					"peer0": {
+						"requests": "grpcs://peer0.pr-bc0.thingagora.org:7151",
+						"events": "grpcs://peer0.pr-bc0.thingagora.org:7153",
+						"serverHostname": "peer0.pr-bc0.thingagora.org",
+						"tlsCacerts": "crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer0.pr-bc0.thingagora.org/msp/tlscacerts/tlsca.pr-bc0.thingagora.org-cert.pem"
+					},
+					"peer1": {
+						"requests": "grpcs://peer1.pr-bc0.thingagora.org:7151",
+						"events": "grpcs://peer1.pr-bc0.thingagora.org:7153",
+						"serverHostname": "peer1.pr-bc0.thingagora.org",
+						"tlsCacerts": "crypto-config/peerOrganizations/pr-bc0.thingagora.org/peers/peer1.pr-bc0.thingagora.org/msp/tlscacerts/tlsca.pr-bc0.thingagora.org-cert.pem"
+					}
+				}
 			}
+		}
 		}
 	}
 }
