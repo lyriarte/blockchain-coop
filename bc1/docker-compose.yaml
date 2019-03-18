@@ -336,10 +336,10 @@ services:
     networks:
         - bc1net
 
-  coop-rest-java.pr-bc1.civis-blockchain.org:
-    image: civisblockchain/coop-rest
-    container_name: coop-rest-java.pr-bc1.civis-blockchain.org
-    hostname: coop-rest-java.pr-bc1.civis-blockchain.org
+  ssm-rest-java.pr-bc1.civis-blockchain.org:
+    image: civisblockchain/coop-rest-java
+    container_name: ssm-rest-java.pr-bc1.civis-blockchain.org
+    hostname: ssm-rest-java.pr-bc1.civis-blockchain.org
     environment:
       - coop_channel=sandbox
       - coop_ccid=ssm
