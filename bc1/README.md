@@ -322,8 +322,25 @@ docker-compose -f docker-compose.yaml up -d explorer.pr-bc1.civis-blockchain.org
 
 ### Java Coop Rest
 
+  * Generate archive
+
 ```
-docker-compose -f ./docker-compose.yaml up coop-rest.pr-bc1.civis-blockchain.org
+../util/rest-java-archive.sh or-bc1.chain-ops.net pr-bc1.civis-blockchain.org User1 'peer0:pr-bc1.civis-blockchain.org,peer1:pr-bc1.civis-blockchain.org'
+
+```
+
+  * Deploy
+
+```
+scp rest-java_pr-bc1.civis-blockchain.org.tgz blockchain@peer0.pr-bc1.civis-blockchain.org:
+
+ssh peer0.pr-bc1.civis-blockchain.org
+
+mkdir rest-java
+tar xvzf rest-java_pr-bc1.civis-blockchain.org.tgz --directory ./rest-java
+cd rest-java
+source .env
+docker-compose -f docker-compose.yaml up -d ssm-rest-java.pr-bc1.civis-blockchain.org
 ```
 
 Go to `http://localhost:9090/swagger-ui.html`

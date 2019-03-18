@@ -1,19 +1,19 @@
 version: '2'
 
 services:
-  coop-rest:
-    image: civisblockchain/coop-rest
+  coop-rest-java:
+    image: civisblockchain/coop-rest-java
     environment:
-      - coop_channel=sandbox
-      - coop_ccid=ssm
+      - coop_channel=${channel}
+      - coop_ccid=${ccid}
       - coop_user_name=${ca__ADMIN}
       - coop_user_password=${ca__PASSWD}
-      - coop_user_org=CivisBlockchain
+      - coop_user_org=${ca__ORG}
+      - coop_endorsers=${endorsers}
       - coop_config_file=file:/opt/rest-coop/config.json
       - coop_config_crypto=file:/opt/rest-coop
-      - coop_endorsers=peer0:CivisBlockchain,peer1:CivisBlockchain
     volumes:
-      - ../../bc1/config.json:/opt/rest-coop/config.json
-      - ../../bc1/crypto-config:/opt/rest-coop/crypto-config
+      - ${config_file}:/opt/rest-coop/config.json
+      - ${config_crypto}:/opt/rest-coop/crypto-config
     ports:
       - 9090:9090
