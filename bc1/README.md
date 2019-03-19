@@ -311,12 +311,16 @@ echo explorerdb__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | se
   * Deploy
 
 ```
-scp explorer__pr-bc1.civis-blockchain.org.tgz blockchain@peer1.pr-bc1.civis-blockchain.org:
+scp explorer_pr-bc1.civis-blockchain.org.tgz blockchain@peer1.pr-bc1.civis-blockchain.org:
 
 ssh peer1.pr-bc1.civis-blockchain.org
 
-tar xvzf explorer__pr-bc1.civis-blockchain.org.tgz
+tar xvzf explorer_pr-bc1.civis-blockchain.org.tgz
 source .env
+
+docker stop explorerdb.pr-bc1.civis-blockchain.org explorer.pr-bc1.civis-blockchain.org
+docker rm explorerdb.pr-bc1.civis-blockchain.org explorer.pr-bc1.civis-blockchain.org
+
 docker-compose -f docker-compose.yaml up -d explorer.pr-bc1.civis-blockchain.org explorerdb.pr-bc1.civis-blockchain.org
 ```
 
@@ -325,7 +329,7 @@ docker-compose -f docker-compose.yaml up -d explorer.pr-bc1.civis-blockchain.org
   * Generate archive
 
 ```
-../util/rest-java-archive.sh or-bc1.chain-ops.net pr-bc1.civis-blockchain.org User1 'peer0:pr-bc1.civis-blockchain.org,peer1:pr-bc1.civis-blockchain.org'
+../util/rest-java-archive.sh or-bc1.chain-ops.net pr-bc1.civis-blockchain.org Admin 'peer0:pr-bc1.civis-blockchain.org,peer1:pr-bc1.civis-blockchain.org'
 
 ```
 

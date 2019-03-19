@@ -333,7 +333,7 @@ services:
       - ADMIN_SECRET=${ca__PASSWD}
     volumes:
       - ./explorer-config/config.json:/opt/explorer/app/platform/fabric/config.json
-      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/users/User1@pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/user
+      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/users/Admin@pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/user
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer0.pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/peer0
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer1.pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/peer1
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/ca:/etc/hyperledger/pr-bc1.civis-blockchain.org/ca

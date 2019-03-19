@@ -3,7 +3,7 @@
 if [ $# -ne 3 ]
 then
     echo "Usage: `basename $0` <ORGA> <USER> <peer0:org0,peer1:org0,peerx:orgx...> "
-    echo "Example: `basename $0` pr-bc1.civis-blockchain.org User1 'peer0:pr-bc1.civis-blockchain.org,peer1:pr-bc1.civis-blockchain.org' "
+    echo "Example: `basename $0` pr-bc1.civis-blockchain.org Admin 'peer0:pr-bc1.civis-blockchain.org,peer1:pr-bc1.civis-blockchain.org' "
     exit 1
 fi
 
@@ -19,7 +19,7 @@ do
 done
 
 
-tar -cvzf explorer_${HOST}_${ORGA}.tgz .env docker-compose.yaml explorer-config \
+tar -cvzf explorer_${ORGA}.tgz .env docker-compose.yaml explorer-config \
     $CP_ARS \
     crypto-config/peerOrganizations/${ORGA}/ca/ca.${ORGA}-cert.pem \
     crypto-config/peerOrganizations/${ORGA}/users/${USER}@${ORGA}/msp/keystore \
