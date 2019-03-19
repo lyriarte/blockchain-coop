@@ -108,6 +108,7 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.pr-bc1.chain-ops.net:7051
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -137,6 +138,8 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.pr-bc1.chain-ops.net:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.pr-bc1.chain-ops.net:7051
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -197,6 +200,7 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.pr-bc1.civis-blockchain.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.pr-bc1.civis-blockchain.org:7051
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -226,6 +230,7 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.pr-bc1.thingagora.org:7051
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -255,6 +260,8 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.pr-bc1.thingagora.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.pr-bc1.thingagora.org:7051
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -322,11 +329,11 @@ services:
       - DATABASE_USERNAME=${explorerdb__ADMIN}
       - DATABASE_PASSWD=${explorerdb__PASSWD}
       - DISCOVERY_AS_LOCALHOST=false
-      - ADMIN_USERNAME=
-      - ADMIN_SECRET=
+      - ADMIN_USERNAME=${ca__ADMIN}
+      - ADMIN_SECRET=${ca__PASSWD}
     volumes:
       - ./explorer-config/config.json:/opt/explorer/app/platform/fabric/config.json
-      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/users/User1@pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/user
+      - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/users/Admin@pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/user
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer0.pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/peer0
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/peers/peer1.pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/peer1
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/ca:/etc/hyperledger/pr-bc1.civis-blockchain.org/ca
