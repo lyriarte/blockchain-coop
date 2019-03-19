@@ -329,8 +329,8 @@ services:
       - DATABASE_USERNAME=${explorerdb__ADMIN}
       - DATABASE_PASSWD=${explorerdb__PASSWD}
       - DISCOVERY_AS_LOCALHOST=false
-      - ADMIN_USERNAME=
-      - ADMIN_SECRET=
+      - ADMIN_USERNAME=${ca__ADMIN}
+      - ADMIN_SECRET=${ca__PASSWD}
     volumes:
       - ./explorer-config/config.json:/opt/explorer/app/platform/fabric/config.json
       - ./crypto-config/peerOrganizations/pr-bc1.civis-blockchain.org/users/User1@pr-bc1.civis-blockchain.org:/etc/hyperledger/pr-bc1.civis-blockchain.org/user
