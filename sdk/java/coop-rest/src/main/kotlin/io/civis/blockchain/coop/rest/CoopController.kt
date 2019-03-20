@@ -8,38 +8,36 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/",  produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 class CoopController(val fabricClient: FabricChainCodeClient, val coopConfig: CoopConfig, val enrolledUserProvider: EnrolledUserProvider) {
 
-    @GetMapping
-    fun query(cmd: String, fcn: String, args: Array<String>): Mono<String> {
-        val user = enrolledUserProvider.get()
-        if("invoke".equals(cmd)) {
-            val future =  fabricClient.invoke(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()))
-            return Mono.fromFuture(future).map{ it -> it.transactionID }
-        } else {
-            val value = fabricClient.query(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
-            return Mono.just(value);
-        }
-    }
+    @GetMapping("/", params = ["cmd=invoke"])
+    fun invoke(fcn: String, args: Array<String>): Mono<InvokeReturn> = invoke(InvokeArgs(fcn, args.iterator()))
+
+    @GetMapping("/", params = ["cmd=query"])
+    fun queryGet(fcn: String, args: Array<String>): String = query(fcn, args)
+
+    @PostMapping("/v2")
+    fun commandInvoke(@RequestBody params: InvokeParam): Mono<InvokeReturn> = invoke(InvokeArgs(params.fcn, params.args.iterator()))
+
+    @GetMapping("/v2")
+    fun commandQuery(fcn: String, args: Array<String>): String = query(fcn, args)
 
 
-    @PostMapping("v2")
-    fun command(@RequestBody params: InvokeParam): Mono<String> {
-        val user = enrolledUserProvider.get()
-        val invokeArgs = InvokeArgs(params.fcn, params.args.iterator());
-        val future = fabricClient.invoke(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, invokeArgs);
-        return Mono.fromFuture(future).map{
-            it -> it.transactionID
-        }
-    }
-
-    @GetMapping("v2")
-    fun query(fcn: String, args: Array<String>): String {
+    private fun query(fcn: String, args: Array<String>): String {
         val user = enrolledUserProvider.get()
         return fabricClient.query(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
     }
 
+    private fun invoke(invokeArgs: InvokeArgs): Mono<InvokeReturn> {
+        val user = enrolledUserProvider.get()
+        val future = fabricClient.invoke(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, invokeArgs);
+        return Mono.fromFuture(future).map {
+            InvokeReturn("SUCCESS", "", it.transactionID)
+        }
+    }
+
     data class InvokeParam(val fcn: String, val args: Array<String>);
+    data class InvokeReturn(val status: String, val info: String, val transactionID: String);
 
 }

@@ -3,9 +3,11 @@ package io.civis.blockchain.coop.rest
 import io.civis.blockchain.coop.core.FabricUserClient
 import io.civis.blockchain.coop.rest.config.CoopConfig
 import org.hyperledger.fabric.sdk.User
+import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
 @Component
+@Scope("singleton")
 class EnrolledUserProvider(val fabricUserClient: FabricUserClient, val coopConfig: CoopConfig) {
 
     private lateinit var user: User;
