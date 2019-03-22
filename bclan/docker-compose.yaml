@@ -83,7 +83,7 @@ services:
 
   cli.bc-coop.bclan:
     container_name: cli-bclan
-    image: hyperledger/fabric-tools
+    image: civisblockchain/cli-chaincode:0.2.1
     tty: true
     environment:
       - GOPATH=/opt/gopath
@@ -104,7 +104,7 @@ services:
     volumes:
         - /var/run/:/host/var/run/
         - ./../chaincode/:/opt/gopath/src/blockchain-coop/
-        - ./../util/:/opt/blockchain-coop/
+        - ./util/:/opt/blockchain-coop/
         - ./crypto-config/peerOrganizations/${cli_ORGA}/users/${cli_USER}@${cli_ORGA}/:/etc/hyperledger/user/
         - ./crypto-config/ordererOrganizations/bclan/tlsca/:/etc/hyperledger/orderer/
         - ./config/:/etc/hyperledger/config/
