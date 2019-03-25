@@ -1,6 +1,5 @@
 package io.civis.blockchain.coop.core.config;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
