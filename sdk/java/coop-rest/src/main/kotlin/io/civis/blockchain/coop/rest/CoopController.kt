@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class CoopController(val fabricClient: FabricChainCodeClient, val coopConfig: CoopConfig, val enrolledUserProvider: EnrolledUserProvider) {
+class CoopController(val fabricClient: FabricChainCodeClient, val coopConfig: CoopConfig, val fabricClientProvider: FabricClientProvider) {
 
     @GetMapping("/", params = ["cmd=invoke"])
     fun invoke(fcn: String, args: Array<String>): Mono<InvokeReturn> = invoke(InvokeArgs(fcn, args.iterator()))
@@ -25,19 +25,19 @@ class CoopController(val fabricClient: FabricChainCodeClient, val coopConfig: Co
 
 
     private fun query(fcn: String, args: Array<String>): String {
-        val user = enrolledUserProvider.get()
-        return fabricClient.query(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
+        val client = fabricClientProvider.get()
+        return fabricClient.query(coopConfig.getEndorsers(), client, coopConfig.channel, coopConfig.chaincodeId, InvokeArgs(fcn, args.iterator()));
     }
 
     private fun invoke(invokeArgs: InvokeArgs): Mono<InvokeReturn> {
-        val user = enrolledUserProvider.get()
-        val future = fabricClient.invoke(coopConfig.getEndorsers(), user, coopConfig.channel, coopConfig.chaincodeId, invokeArgs);
+        val client = fabricClientProvider.get()
+        val future = fabricClient.invoke(coopConfig.getEndorsers(), client, coopConfig.channel, coopConfig.chaincodeId, invokeArgs);
         return Mono.fromFuture(future).map {
             InvokeReturn("SUCCESS", "", it.transactionID)
         }
     }
 
     data class InvokeParam(val fcn: String, val args: Array<String>);
-    data class InvokeReturn(val status: String, val info: String, val transactionID: String);
+    data class InvokeReturn(val status: String, val info: String, val transactionId: String);
 
 }

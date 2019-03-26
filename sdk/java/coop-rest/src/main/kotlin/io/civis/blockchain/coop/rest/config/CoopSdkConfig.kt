@@ -23,8 +23,8 @@ class CoopSdkConfig(val coopConfig: CoopConfig) {
             = FabricChannelFactory.factory(fabricConfig, coopConfig.configCryptoBase)
 
     @Bean
-    fun getFabricChainCodeClient(fabricClientFactory: FabricClientFactory, fabricChannelFactory: FabricChannelFactory): FabricChainCodeClient
-            = FabricChainCodeClient(fabricClientFactory, fabricChannelFactory)
+    fun getFabricChainCodeClient(fabricChannelFactory: FabricChannelFactory): FabricChainCodeClient
+            = FabricChainCodeClient(fabricChannelFactory)
 
     @Bean
     fun getFabricUserClient(fabricConfig: FabricConfig, fabricClientFactory: FabricClientFactory): FabricUserClient
