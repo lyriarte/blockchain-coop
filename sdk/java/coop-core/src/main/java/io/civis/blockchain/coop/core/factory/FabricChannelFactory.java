@@ -28,6 +28,9 @@ public class FabricChannelFactory {
     }
 
     public Channel getChannel(List<Endorser> endorsers, HFClient client, String channelName) throws IOException, InvalidArgumentException, TransactionException {
+        if(client.getChannel(channelName) != null) {
+            return client.getChannel(channelName);
+        }
         OrdererConfig ordererConfig = fabricConfig.getNetwork().getOrderer();
 
         Orderer orderer = client.newOrderer(ordererConfig.getServerHostname(), ordererConfig.getUrl(), ordererConfig.getPeerTlsProperties(cryptoConfigBase));

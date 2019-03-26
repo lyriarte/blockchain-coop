@@ -47,10 +47,7 @@ public class FabricUserClient {
     private User enroll(HFCAClient caClient, String user, String password, String orgName) throws Exception {
         Enrollment adminEnrollment = caClient.enroll(user, password);
         String mspid = fabricConfig.getNetwork().getOrganisation(orgName).getMspid();
-        return new FabricUser(user, orgName, adminEnrollment,mspid);
-    }
-
-    public void check(String user, String orgName) throws Exception {
+        return new FabricUser(user, orgName, adminEnrollment, mspid);
     }
 
 }
