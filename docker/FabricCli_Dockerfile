@@ -1,0 +1,11 @@
+FROM hyperledger/fabric-tools:1.4.0
+
+ENV SSM_VERSION=0.4.3
+ENV SSM_PATH=/opt/civis-blockchain/ssm
+WORKDIR /opt/gopath/src/github.com/hyperledger/fabric/peer
+
+COPY --from=civisblockchain/ssm:0.4.3 $SSM_PATH/ssm-*.pak ./ssm.pak
+COPY --from=civisblockchain/ssm:0.4.3 $SSM_PATH/util ./util
+COPY --from=civisblockchain/ssm:0.4.3 $SSM_PATH/env ./env
+
+ENV PATH="$SSM_PATH/util:${PATH}"

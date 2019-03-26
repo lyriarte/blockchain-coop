@@ -74,18 +74,18 @@ docker-compose -f docker-compose.yaml up -d ca.bc-coop.bclan orderer.bclan peer0
 
 ```
 cli_ORGA=bc-coop.bclan
-echo cli_ORGA=${cli_ORGA} > ../util/env
+echo cli_ORGA=${cli_ORGA} > util/env
 
 # orderer address and certificate
-echo ORDERER_ADDR="orderer.bclan:7050" >> ../util/env
-echo ORDERER_CERT="/etc/hyperledger/orderer/tlsca.bclan-cert.pem" >> ../util/env
+echo ORDERER_ADDR="orderer.bclan:7050" >> util/env
+echo ORDERER_CERT="/etc/hyperledger/orderer/tlsca.bclan-cert.pem" >> util/env
 
 # current session chaincode
-echo CHANNEL="sandbox" >> ../util/env
-echo CHAINCODE="ex02" >> ../util/env
+echo CHANNEL="sandbox" >> util/env
+echo CHAINCODE="ex02" >> util/env
 
 # override target peer if needed
-echo CORE_PEER_ADDRESS="peer0.${cli_ORGA}:7051" >> ../util/env
+echo CORE_PEER_ADDRESS="peer0.${cli_ORGA}:7051" >> util/env
 
 # Enter CLI environment
 docker exec -it cli-bclan /bin/bash
@@ -97,6 +97,40 @@ source /opt/blockchain-coop/env
 peer channel create -o ${ORDERER_ADDR} -c ${CHANNEL} -f /etc/hyperledger/config/${CHANNEL}.tx --tls --cafile ${ORDERER_CERT}
 peer channel join -b ${CHANNEL}.block
 ```
+
+
+### Use ssm
+
+* Install chaincode
+```
+# Chaincode intantiation in CLI environment
+source /opt/blockchain-coop/env
+peer chaincode install /opt/civis-blockchain/ssm/ssm.pak
+```
+* Instantiate with admin "adam"
+```
+source /opt/blockchain-coop/env
+source /opt/civis-blockchain/ssm/env
+
+# Create keys for "adam"
+rsa_keygen adam
+# Create init.arg string
+echo -n '{"Args":["init","[' > init.arg
+json_agent adam adam.pub | jq . -cM | sed 's/"/\\"/g' | tr -d "\n" >> init.arg
+echo -n ']"]}' >> init.arg
+# Init chaincode
+peer chaincode instantiate -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CERT} -C ${CHANNEL} -n ${CHAINCODE} -v ${VERSION} -c $(cat init.arg) -P "OR ('BlockchainLANCoopMSP.member')"
+```
+
+```
+peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["admin", "adam"]}'
+```
+
+```
+exit
+```
+
+### Use chaincode_example02
 
 ```
 # Chaincode intantiation in CLI environment
