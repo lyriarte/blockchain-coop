@@ -83,7 +83,7 @@ services:
 
   cli-init.bc-coop.bclan:
     container_name: cli-init-bclan-network-it
-    image: civisblockchain/cli-chaincode:0.2.1
+    image: civisblockchain/fabric-cli-chaincode:0.2.1
     tty: true
     environment:
       - GOPATH=/opt/gopath
@@ -113,7 +113,7 @@ services:
 
   cli.bc-coop.bclan:
     container_name: cli-bclan-network-it
-    image: civisblockchain/cli-chaincode:0.2.1
+    image: civisblockchain/fabric-cli-chaincode:0.2.1
     tty: true
     environment:
       - GOPATH=/opt/gopath
