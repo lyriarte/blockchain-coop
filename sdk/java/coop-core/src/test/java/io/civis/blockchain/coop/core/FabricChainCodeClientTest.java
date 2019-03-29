@@ -2,6 +2,8 @@ package io.civis.blockchain.coop.core;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
+import io.civis.blockchain.coop.core.config.FabricConfig;
+import io.civis.blockchain.coop.core.factory.FabricClientFactory;
 import io.civis.blockchain.coop.core.model.Endorser;
 import io.civis.blockchain.coop.core.model.InvokeArgs;
 import io.netty.handler.ssl.ReferenceCountedOpenSslClientContext;
@@ -28,6 +30,8 @@ class FabricChainCodeClientTest {
     public static String USER_PASSWORD = "660bd560b383333750f629362e0160f9";
 
     private FabricUserClient client = FabricUserClient.fromConfigFile(CLIENT_CONFIG, CRYPTO_CONFIG);
+    private FabricConfig fabricConfig = FabricConfig.loadFromFile(CLIENT_CONFIG);
+    private FabricClientFactory fabricClientFactory = FabricClientFactory.factory(fabricConfig, CRYPTO_CONFIG);
     private FabricChainCodeClient chainCodeClient = FabricChainCodeClient.fromConfigFile(CLIENT_CONFIG, CRYPTO_CONFIG);
     private List<Endorser> endorsers = ImmutableList.of(new Endorser("peer0", BCLAN));
 
@@ -38,7 +42,7 @@ class FabricChainCodeClientTest {
     void query() throws Exception {
         User user = client.enroll(USER_NAME, USER_PASSWORD, BCLAN);
 
-        String value = chainCodeClient.query(endorsers, user, "sandbox", "ex02", InvokeArgs.from("query", "a"));
+        String value = chainCodeClient.query(endorsers, fabricClientFactory.getHfClient(), "sandbox", "ex02", InvokeArgs.from("query", "a"));
         assertThat(Ints.tryParse(value)).isNotNull();
     }
 
@@ -46,7 +50,7 @@ class FabricChainCodeClientTest {
     void invoke() throws Exception {
         User user = client.enroll(USER_NAME, USER_PASSWORD, BCLAN);
 
-        CompletableFuture<BlockEvent.TransactionEvent> value = chainCodeClient.invoke(endorsers, user, "sandbox", "ex02", InvokeArgs.from(
+        CompletableFuture<BlockEvent.TransactionEvent> value = chainCodeClient.invoke(endorsers, fabricClientFactory.getHfClient(), "sandbox", "ex02", InvokeArgs.from(
                 "invoke",
                 "a", "b", "10"
         ));
