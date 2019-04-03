@@ -1,4 +1,4 @@
-# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2018 
+# Copyright Luc Yriarte <luc.yriarte@thingagora.org> 2018
 # License: Apache-2.0
 
 version: '2'
@@ -83,7 +83,7 @@ services:
 
   cli.bc-coop.bclan:
     container_name: cli-bclan
-    image: civisblockchain/cli-chaincode:0.2.1
+    image: civisblockchain/cli-chaincode
     tty: true
     environment:
       - GOPATH=/opt/gopath
