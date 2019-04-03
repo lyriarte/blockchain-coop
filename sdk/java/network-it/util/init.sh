@@ -22,3 +22,5 @@ echo 'Install chaincode ssm'
 peer chaincode install /opt/civis-blockchain/ssm/ssm.pak
 echo 'Instantiate chaincode ssm'
 peer chaincode instantiate -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CERT} -C ${CHANNEL} -n ${CHAINCODE} -v ${VERSION} -c $(cat /opt/blockchain-coop/init.arg) -P "OR ('BlockchainLANCoopMSP.member')"
+sleep 5
+peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["list", "user"]}'
