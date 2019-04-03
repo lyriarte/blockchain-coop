@@ -1,6 +1,30 @@
 # Make 
 
-## Fabric cli chaincode
+## Release process
+
+*  Define version
+```
+VERSION=0.5.0
+```
+
+*  Prepare git tag
+```
+git tag -a ${VERSION} -m "${VERSION} version"
+git checkout ${VERSION}
+```
+
+* Build, tag as latest version and push docker images
+
+```
+make build tag-latest push -e VERSION=${VERSION}
+```
+* Push git tag
+
+```
+git push origin ${VERSION}
+```
+
+## Fabric Cli Chaincode
 This is a docker image named civisblockchain/fabric-cli-chaincode and based on hyperledger/fabric-tools:1.4.0  
 The image contains packaged chaincodes and tools needs to instantiate then in blockchain coop networks
 
@@ -25,4 +49,22 @@ make push-docker-fabric-cli-chaincode -e VERSION=0.2.1
 ### Inspect
 ```
 make inspect-docker-fabric-cli-chaincode -e VERSION=0.2.1
+```
+
+## Java Rest SDK
+
+### Build
+
+```
+make build-docker-sdk-rest-java -e VERSION=0.2.1
+```
+
+### Tag as latest
+```
+make tag-latest-docker-sdk-rest-java -e VERSION=0.2.1
+```
+
+### Push
+```
+make push-docker-sdk-rest-java -e VERSION=0.2.1
 ```
