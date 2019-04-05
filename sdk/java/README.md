@@ -6,6 +6,16 @@
 docker-compose -f docker-compose-it.yaml up -d
 ```
 
+## Edit /etc/host
+
+```
+127.0.0.1	ca.bc-coop.bclan
+127.0.0.1	peer0.bc-coop.bclan
+127.0.0.1	orderer.bclan
+
+```
+
+
 ## Build project
 
 ```

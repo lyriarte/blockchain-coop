@@ -41,16 +41,14 @@ class FabricChainCodeClientTest {
     @Test
     void query() throws Exception {
         User user = client.enroll(USER_NAME, USER_PASSWORD, BCLAN);
-
-        String value = chainCodeClient.query(endorsers, fabricClientFactory.getHfClient(), "sandbox", "ex02", InvokeArgs.from("query", "a"));
+        String value = chainCodeClient.query(endorsers, fabricClientFactory.getHfClient(user), "sandbox", "ex02", InvokeArgs.from("query", "a"));
         assertThat(Ints.tryParse(value)).isNotNull();
     }
 
     @Test
     void invoke() throws Exception {
         User user = client.enroll(USER_NAME, USER_PASSWORD, BCLAN);
-
-        CompletableFuture<BlockEvent.TransactionEvent> value = chainCodeClient.invoke(endorsers, fabricClientFactory.getHfClient(), "sandbox", "ex02", InvokeArgs.from(
+        CompletableFuture<BlockEvent.TransactionEvent> value = chainCodeClient.invoke(endorsers, fabricClientFactory.getHfClient(user), "sandbox", "ex02", InvokeArgs.from(
                 "invoke",
                 "a", "b", "10"
         ));
