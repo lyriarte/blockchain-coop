@@ -21,13 +21,6 @@ public class FabricClientFactory {
         return new FabricClientFactory(fabricConfig, cryptoConfigBase);
     }
 
-    public HFClient getHfClient() throws Exception {
-        CryptoSuite cryptoSuite = CryptoSuite.Factory.getCryptoSuite();
-        HFClient client = HFClient.createNewInstance();
-        client.setCryptoSuite(cryptoSuite);
-        return client;
-    }
-
     public HFCAClient getHfCaClient(String orgName) throws Exception {
         OrganisationConfig config = fabricConfig.getNetwork().getOrganisation(orgName);
         CryptoSuite cryptoSuite = CryptoSuite.Factory.getCryptoSuite();
@@ -39,6 +32,13 @@ public class FabricClientFactory {
     public HFClient getHfClient(User admin) throws Exception {
         HFClient client = getHfClient();
         client.setUserContext(admin);
+        return client;
+    }
+
+    private HFClient getHfClient() throws Exception {
+        CryptoSuite cryptoSuite = CryptoSuite.Factory.getCryptoSuite();
+        HFClient client = HFClient.createNewInstance();
+        client.setCryptoSuite(cryptoSuite);
         return client;
     }
 
