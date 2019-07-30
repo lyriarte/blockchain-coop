@@ -34,7 +34,7 @@ services:
       - ORDERER_GENERAL_LOGLEVEL=info
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_GENESISMETHOD=file
-      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/config/genesis.block
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/config/bc0_genesis.block
       - ORDERER_GENERAL_LOCALMSPID=ThingagoraBC0OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/
       - ORDERER_GENERAL_TLS_ENABLED=true
@@ -115,8 +115,8 @@ services:
     networks:
       - bc0net
 
-  cli.pr-bc0.thingagora.org:
-    container_name: cli-ThingagoraBC0Peer
+  cli.or-bc0.thingagora.org:
+    container_name: cli-ThingagoraBC0Orderer
     image: hyperledger/fabric-tools
     tty: true
     environment:
@@ -126,57 +126,22 @@ services:
       - CORE_CHAINCODE_LOGGING_LEVEL=info
       - CORE_PEER_ID=cli.${cli_ORGA}
       - CORE_PEER_ADDRESS=peer0.${cli_ORGA}:7151
-      - CORE_PEER_LOCALMSPID=ThingagoraBC0PeerMSP
-      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/user/msp/
+      - CORE_PEER_LOCALMSPID=${cli_MSP}
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peerOrganizations/${cli_ORGA}/users/${cli_USER}@${cli_ORGA}/msp/
       - CORE_CHAINCODE_KEEPALIVE=10
       - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/user/tls/client.key
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/user/tls/client.crt
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/user/tls/ca.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrganizations/${cli_ORGA}/users/${cli_USER}@${cli_ORGA}/tls/client.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrganizations/${cli_ORGA}/users/${cli_USER}@${cli_ORGA}/tls/client.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrganizations/${cli_ORGA}/users/${cli_USER}@${cli_ORGA}/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
         - /var/run/:/host/var/run/
-        - ./../chaincode/:/opt/gopath/src/blockchain-coop/
-        - ./../util/:/opt/blockchain-coop/
-        - ./crypto-config/peerOrganizations/${cli_ORGA}/users/${cli_USER}@${cli_ORGA}/:/etc/hyperledger/user/
-        - ./crypto-config/ordererOrganizations/or-bc0.thingagora.org/tlsca/:/etc/hyperledger/orderer/
+        - ./chaincode/:/opt/gopath/src/${BLOCKCHAIN}/
+        - ./util/:/opt/${BLOCKCHAIN}/
+        - ./crypto-config/peerOrganizations/:/etc/hyperledger/peerOrganizations/
+        - ./crypto-config/ordererOrganizations/${ORDERER_ORGA}/tlsca/:/etc/hyperledger/orderer/
         - ./config/:/etc/hyperledger/config/
     networks:
         - bc0net
-
-  explorerdb.pr-bc0.thingagora.org:
-    image: hyperledger/explorer-db:latest
-    container_name: explorerdb.pr-bc0.thingagora.org
-    hostname: explorerdb.pr-bc0.thingagora.org
-    environment:
-      - DATABASE_DATABASE=fabricexplorer
-      - DATABASE_USERNAME=${explorerdb__ADMIN}
-      - DATABASE_PASSWORD=${explorerdb__PASSWD}
-    volumes:
-      - ../util/explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
-    networks:
-      - bc0net
-
-  explorer.pr-bc0.thingagora.org:
-    image: hyperledger/explorer:latest
-    container_name: explorer.pr-bc0.thingagora.org
-    hostname: explorer.pr-bc0.thingagora.org
-    environment:
-      - DATABASE_HOST=explorerdb.pr-bc0.thingagora.org
-      - DATABASE_USERNAME=${explorerdb__ADMIN}
-      - DATABASE_PASSWD=${explorerdb__PASSWD}
-      - DISCOVERY_AS_LOCALHOST=false
-      - ADMIN_USERNAME=${ca__ADMIN}
-      - ADMIN_SECRET=${ca__PASSWD}
-    volumes:
-      - ./explorer-config/config.json:/opt/explorer/app/platform/fabric/config.json
-      - ./crypto-config/peerOrganizations/${cli_ORGA}/users/${cli_USER}@pr-bc0.thingagora.org/:/etc/hyperledger/admin/peer
-      - ./crypto-config/ordererOrganizations/or-bc0.thingagora.org/users/${cli_USER}@or-bc0.thingagora.org:/etc/hyperledger/admin/orderer
-      - ./crypto-config/peerOrganizations/${cli_ORGA}/peers/peer0.pr-bc0.thingagora.org:/etc/hyperledger/peer0
-    command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
-    ports:
-      - 8080:8080
-    networks:
-      - bc0net
 
