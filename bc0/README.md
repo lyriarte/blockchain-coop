@@ -138,3 +138,33 @@ rm env .env docker-compose.yaml peer_peer${idx}_${ORGA}.tgz
 exit
 
 ```
+
+#### Command Line Interface
+
+```
+cli_MSP=${MSP}
+cli_ORGA=${ORGA}
+cli_USER=Admin
+tar xvzf user_${cli_USER}_${cli_ORGA}.tgz
+
+echo cli_MSP=${cli_MSP} > .env
+echo cli_ORGA=${cli_ORGA} >> .env
+echo cli_USER=${cli_USER} >> .env
+echo BLOCKCHAIN=${BLOCKCHAIN} >> .env
+echo ORDERER_ORGA=${ORDERER_ORGA} >> .env
+docker-compose -f docker-compose.yaml up -d cli.${ORDERER_ORGA}
+
+idx=0
+
+cp .env util/env
+# orderer address and certificate
+echo ORDERER_ADDR="orderer${idx}.${ORDERER_ORGA}:7050" >> util/env
+echo ORDERER_CERT="/etc/hyperledger/orderer/tlsca.${ORDERER_ORGA}-cert.pem" >> util/env
+```
+
+```
+docker exec -it cli-${ORDERER_ORGNAME} /bin/bash
+# Use environment variables in the container
+source /opt/bc0/env
+```
+
