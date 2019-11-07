@@ -141,6 +141,8 @@ exit
 
 #### Command Line Interface
 
+Create container
+
 ```
 cli_MSP=${MSP}
 cli_ORGA=${ORGA}
@@ -162,9 +164,30 @@ echo ORDERER_ADDR="orderer${idx}.${ORDERER_ORGA}:7050" >> util/env
 echo ORDERER_CERT="/etc/hyperledger/orderer/tlsca.${ORDERER_ORGA}-cert.pem" >> util/env
 ```
 
+Enter and leave container
+
 ```
+# Enter container
 docker exec -it cli-${ORDERER_ORGNAME} /bin/bash
 # Use environment variables in the container
 source /opt/bc0/env
+# Exit container
+exit
+```
+
+#### Channel
+
+Enter container and source environment
+
+```
+# CHANNEL=sandbox
+# Channel creation in CLI environment
+peer channel create -o ${ORDERER_ADDR} -c ${CHANNEL} -f /etc/hyperledger/config/${CHANNEL}.tx --tls --cafile ${ORDERER_CERT}
+# Channel backup 
+cp ${CHANNEL}.block /opt/bc0
+# Joining channel
+peer channel join -b ${CHANNEL}.block
+# CORE_PEER_ADDRESS=
+# Join...
 ```
 
