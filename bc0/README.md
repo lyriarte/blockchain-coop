@@ -191,3 +191,36 @@ peer channel join -b ${CHANNEL}.block
 # Join...
 ```
 
+#### Chaincode
+
+Copy SSM sources
+
+```
+cp -r ../../blockchain-ssm/chaincode/go chaincode
+```
+
+Enter container and source environment
+
+```
+# package chaincode
+CHAINCODE=ssm
+VERSION=0.4.2
+peer chaincode package -n ${CHAINCODE} -p bc0/go/${CHAINCODE} -v ${VERSION} ${CHAINCODE}-${VERSION}.pak
+# Chaincode package backup 
+cp ${CHAINCODE}-${VERSION}.pak /opt/bc0
+# Chaincode install
+peer chaincode install -n ${CHAINCODE} -v ${VERSION} -p ${CHAINCODE}-${VERSION}.pak
+# CORE_PEER_ADDRESS=
+# install...
+```
+
+```
+# instantiate with admins
+export PATH=/opt/bc0:$PATH
+echo -n '{"Args":["init","[' > init.arg
+json_agent lyr-main lyr-main.pub  | jq . -cM | sed 's/"/\\"/g' | tr -d "\n" >> init.arg
+echo -n ',' >> init.arg
+json_agent lyr-share lyr-share.pub  | jq . -cM | sed 's/"/\\"/g' | tr -d "\n" >> init.arg
+peer chaincode instantiate -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CERT} -C ${CHANNEL} -n ${CHAINCODE} -v ${VERSION} -c $(cat init.arg) -P "OR ('ThingagoraBC0PeerMSP.member')"
+peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["list", "admin"]}'
+```
