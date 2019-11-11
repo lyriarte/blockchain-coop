@@ -224,3 +224,19 @@ json_agent lyr-share lyr-share.pub  | jq . -cM | sed 's/"/\\"/g' | tr -d "\n" >>
 peer chaincode instantiate -o ${ORDERER_ADDR} --tls --cafile ${ORDERER_CERT} -C ${CHANNEL} -n ${CHAINCODE} -v ${VERSION} -c $(cat init.arg) -P "OR ('ThingagoraBC0PeerMSP.member')"
 peer chaincode query -C ${CHANNEL} -n ${CHAINCODE} -c '{"Args":["list", "admin"]}'
 ```
+
+#### Use the node.js SDK
+
+```
+npm install ../sdk/node/
+export PATH=$(pwd)/node_modules/blockchain-coop:$PATH
+tar xvzf ca_pr-bc0.thingagora.org.tgz .env
+source .env
+```
+
+```
+bcc-cli.js enroll $ca__ADMIN $ca__PASSWD Thingagora
+bcc-cli.js check $ca__ADMIN
+bcc-cli.js query $ca__ADMIN peer0 Thingagora sandbox ssm list ssm
+bcc-rest.js 8080 $ca__ADMIN peer0:Thingagora sandbox ssm
+```
