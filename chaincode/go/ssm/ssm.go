@@ -85,7 +85,10 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		}
 		err = self.Verify(stub, args, "ADMIN")
 		if (err != nil) {
-			return shim.Error(err.Error())
+			err = self.CheckGrants(stub, args, function)
+			if (err != nil) {
+				return shim.Error(err.Error())
+			}
 		}
 		return self.Register(stub, args)
 	}
@@ -97,7 +100,10 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		}
 		err = self.Verify(stub, args, "ADMIN")
 		if (err != nil) {
-			return shim.Error(err.Error())
+			err = self.CheckGrants(stub, args, function)
+			if (err != nil) {
+				return shim.Error(err.Error())
+			}
 		}
 		return self.Create(stub, args)
 	}
@@ -109,9 +115,36 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		}
 		err = self.Verify(stub, args, "ADMIN")
 		if (err != nil) {
-			return shim.Error(err.Error())
+			err = self.CheckGrants(stub, args, function)
+			if (err != nil) {
+				return shim.Error(err.Error())
+			}
 		}
 		return self.Start(stub, args)
+	}
+	
+	// "limit", context:State, admin_name:string, signature:b64
+	if function == "limit" {
+		if len(args) != 3 {
+			return shim.Error(errmsg)
+		}
+		err = self.Verify(stub, args, "ADMIN")
+		if (err != nil) {
+			return shim.Error(err.Error())
+		}
+		return self.Limit(stub, args)
+	}
+	
+	// "grant", rights:Grant, admin_name:string, signature:b64
+	if function == "grant" {
+		if len(args) != 3 {
+			return shim.Error(errmsg)
+		}
+		err = self.Verify(stub, args, "ADMIN")
+		if (err != nil) {
+			return shim.Error(err.Error())
+		}
+		return self.Grant(stub, args)
 	}
 	
 	// "perform", action:string, context:State, user_name:string, signature:b64
@@ -145,6 +178,9 @@ func (self *SSMChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "user" {
 	// "user", <user name>
 		dat, err = stub.GetState("USER_" + args[0])
+	} else if function == "credits" {
+	// "credits", <user name>
+		dat, err = stub.GetState("GRANT_" + args[0])
 	} else if function == "admin" {
 	// "admin", <admin name>
 		dat, err = stub.GetState("ADMIN_" + args[0])
@@ -266,6 +302,71 @@ func (self *SSMChaincode) Start(stub shim.ChaincodeStubInterface, args []string)
 }
 
 
+// "limit", context:State, admin_name:string, signature:b64
+func (self *SSMChaincode) Limit(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var err error	
+	var update State
+	// Create state update from JSON string
+	err = update.Deserialize([]byte(args[0]))
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}
+	// Get the session state referenced in the update
+	var session State
+	err = session.Get(stub, "STATE_" + update.Session)
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}
+	// Let the current session update its state with the new limit
+	err = session.SetLimit(&update)
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}
+	// Save the session state
+	err = session.Put(stub, "STATE_" + session.Session)
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}
+	return shim.Success(nil)
+}
+
+
+// "grant", rights:Grant, admin_name:string, signature:b64
+func (self *SSMChaincode) Grant(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var err error	
+	var update Grant
+	// Create grant update from JSON string
+	err = update.Deserialize([]byte(args[0]))
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}
+	// Get the user referenced by the grant update
+	var user Agent
+	err =  user.Get(stub, "USER_" + update.User)
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}
+	// Get the user grant to update if any
+	var grant Grant
+	err = grant.Get(stub, "GRANT_" + update.User)
+	if (err != nil) {
+		// No preexisting grant, use the update for current grant
+		grant = update
+	}
+	// Let the current grant update its credits with the new grant
+	err = grant.SetCredits(&update)
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}
+	// Save the user grant
+	err = grant.Put(stub, "GRANT_" + grant.User)
+	if (err != nil) {
+		return shim.Error(err.Error())
+	}
+	return shim.Success(nil)
+}
+
+
 // "perform", action:string, context:State, user_name:string, signature:b64
 func (self *SSMChaincode) Perform(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var err error	
@@ -338,6 +439,37 @@ func (self *SSMChaincode) Verify(stub shim.ChaincodeStubInterface, args []string
 	}
 	return verifier.Verify(message, args[argCount - 1])
 }	
+
+// user grants verification
+func (self *SSMChaincode) CheckGrants(stub shim.ChaincodeStubInterface, args []string, api string) error {
+	// user signature verification
+	err := self.Verify(stub, args, "USER")
+	if (err != nil) {
+		return err
+	}
+	// Get user name from args
+	user := args[len(args) - 2]
+	// Get the user grant
+	var grant Grant
+	err = grant.Get(stub, "GRANT_" + user)
+	if (err != nil) {
+		return err
+	}
+	// Let grant verify and update credits
+	err = grant.ApiGrant(user, api)
+	if (err != nil) {
+		return err
+	}
+	// Save the updated grants
+	err = grant.Put(stub, "GRANT_" + user)
+	if (err != nil) {
+		return err
+	}	
+	// All done
+	return nil
+}
+
+
 
 // ensure a key is not already in use
 func (self *SSMChaincode) CheckUnique(stub shim.ChaincodeStubInterface, key string) error {

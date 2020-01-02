@@ -204,7 +204,7 @@ Enter container and source environment
 ```
 # package chaincode
 CHAINCODE=ssm
-VERSION=0.4.2
+VERSION=0.7.0
 peer chaincode package -n ${CHAINCODE} -p bc0/go/${CHAINCODE} -v ${VERSION} ${CHAINCODE}-${VERSION}.pak
 # Chaincode package backup 
 cp ${CHAINCODE}-${VERSION}.pak /opt/bc0

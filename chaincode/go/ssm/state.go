@@ -51,6 +51,10 @@ func (self *State) Deserialize(data []byte) error {
 //
 
 func (self *State) Perform(update *State, role string, action string) error {
+	// Check if current iteration count passed the limit
+	if self.Limit != nil && self.Iteration >= *self.Limit {
+		return errors.New("Passed limit iterations count.")
+	}
 	// Check the proposed update iteration
 	if self.Iteration != update.Iteration {
 		return errors.New("Invalid iteration number of proposed update.")
@@ -67,4 +71,16 @@ func (self *State) Perform(update *State, role string, action string) error {
 	// All done
 	return nil
 }
+
+func (self *State) SetLimit(update *State) error {
+	// Check the proposed update iteration
+	if self.Iteration != update.Iteration {
+		return errors.New("Invalid iteration number of proposed update.")
+	}
+	// Update iteration limit
+	self.Limit = update.Limit 
+	// All done
+	return nil
+}
+
 

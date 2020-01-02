@@ -62,6 +62,93 @@ func TestAgent(test *testing.T) {
 
 
 //
+// Grant
+//
+
+func TestGrant(test *testing.T) {
+	fmt.Println("---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- Grant")
+
+	var err error
+	var grant Grant
+
+	fmt.Println("---- ---- ---- ---- Deserialize")
+	strGrant := "{\"user\": \"Bob\",\"iteration\": 0,\"credits\": {\"create\": {\"amount\": 1},\"start\": {\"amount\": 1}}}"
+	err = grant.Deserialize([]byte(strGrant))
+	if err != nil {
+		test.Fatal(err)
+	}
+	
+	fmt.Println("---- ---- ---- ---- Serialize")
+	bytesGrant, err := grant.Serialize()
+	if err != nil {
+		test.Fatal(err)
+	}
+	if bytesGrant == nil {
+		test.Fatal("bytesGrant")
+	}
+	
+	fmt.Println("---- ---- ---- ---- ApiGrant")
+	fmt.Println("---- ---- negative")
+	err = grant.ApiGrant("Tom","start")
+	if err == nil {
+		test.Fatal("Should fail due to user.")
+	}
+	fmt.Println("---- ---- positive")
+	err = grant.ApiGrant("Bob","start")
+	if err != nil {
+		test.Fatal(err)
+	}
+	fmt.Println("---- ---- negative")
+	err = grant.ApiGrant("Bob","start")
+	if err == nil {
+		test.Fatal("Should fail due to use cont.")
+	}
+	fmt.Println("---- ---- negative")
+	err = grant.ApiGrant("Bob","stop")
+	if err == nil {
+		test.Fatal("Should fail due to non existing api.")
+	}
+
+	fmt.Println("---- ---- ---- ---- SetCredits")
+	var update Grant
+	strUpdate := "{\"user\": \"Bob\",\"iteration\": 0,\"credits\": {\"start\": {\"amount\": 1}}}"
+	err = update.Deserialize([]byte(strUpdate))
+	if err != nil {
+		test.Fatal(err)
+	}
+	fmt.Println("---- ---- positive")
+	err = grant.SetCredits(&update)
+	if err != nil {
+		test.Fatal(err)
+	}
+	fmt.Println("---- ---- negative")
+	err = grant.SetCredits(&update)
+	if err == nil {
+		test.Fatal("Should fail due to iteration.")
+	}
+	strUpdate = "{\"user\": \"Bob\",\"iteration\": 1,\"credits\": {\"grant\": {\"amount\": 1}}}"
+	err = update.Deserialize([]byte(strUpdate))
+	if err != nil {
+		test.Fatal(err)
+	}
+	fmt.Println("---- ---- negative")
+	err = grant.SetCredits(&update)
+	if err == nil {
+		test.Fatal("Should fail due to forbidden api.")
+	}
+
+	fmt.Println("---- ---- ---- ---- ApiGrant")
+	fmt.Println("---- ---- negative")
+	err = grant.ApiGrant("Bob","create")
+	if err == nil {
+		test.Fatal("Should fail due to removed api.")
+	}
+
+	fmt.Println("---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ")
+}
+
+
+//
 // State
 //
 
@@ -105,6 +192,25 @@ func TestState(test *testing.T) {
 		test.Fatal("Should fail due to iteration.")
 	}
 
+	fmt.Println("---- ---- ---- ---- Deserialize ---- iteration 0, limit 0")
+	strState = "{\"ssm\": \"Car dealership\", \"session\": \"deal20181201\", \"iteration\": 0, \"limit\": 0, \"public\": \"Used car for 100 dollars.\", \"roles\": {\"Bob\": \"Buyer\", \"Sam\": \"Seller\"}}"
+	err = state.Deserialize([]byte(strState))
+	if err != nil {
+		test.Fatal(err)
+	}
+	fmt.Println("---- ---- Perform ---- negative")
+	err = state.Perform(&update, "Role", "Action")
+	if err == nil {
+		test.Fatal("Should fail due to limit.")
+	}
+	fmt.Println("---- ---- Limit ---- 1")
+	*state.Limit = 1
+	fmt.Println("---- ---- Perform ---- positive")
+	err = state.Perform(&update, "Role", "Action")
+	if err != nil {
+		test.Fatal(err)
+	}
+	
 	fmt.Println("---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ")
 }
 
