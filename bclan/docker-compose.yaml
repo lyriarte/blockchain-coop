@@ -69,6 +69,10 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bc-coop.bclan:7051
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=${couchdb0__ADMIN}
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=${couchdb0__PASSWD}
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
@@ -78,8 +82,23 @@ services:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/bc-coop.bclan/peers/peer0.bc-coop.bclan/msp:/etc/hyperledger/msp/
         - ./crypto-config/peerOrganizations/bc-coop.bclan/peers/peer0.bc-coop.bclan/tls:/etc/hyperledger/tls/
+    depends_on:
+      - orderer.bclan
+      - couchdb0.bc-coop.bclan
     networks:
       - bclannet
+
+  couchdb0.bc-coop.bclan:
+    container_name: couchdb0
+    image: hyperledger/fabric-couchdb:x86_64-1.0.6
+    environment:
+      - COUCHDB_USER=${couchdb0__ADMIN}
+      - COUCHDB_PASSWORD=${couchdb0__PASSWD}
+    ports:
+      - 5984:5984
+    networks:
+      - bclannet
+
 
   cli.bc-coop.bclan:
     container_name: cli-bclan

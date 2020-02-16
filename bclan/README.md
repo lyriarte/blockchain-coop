@@ -54,6 +54,8 @@ echo ca__CA_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/ca/*
 echo ca__TLS_KEYFILE=$(basename $(ls crypto-config/peerOrganizations/${ORGA}/tlsca/*_sk)) >> .env
 echo ca__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 echo ca__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo couchdb0__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
+echo couchdb0__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 echo explorerdb__ADMIN=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 echo explorerdb__PASSWD=$(cat /dev/urandom | xxd | head -n 1 | cut -b 10-49 | sed "s/ //g") >> .env
 
@@ -64,7 +66,7 @@ echo cli_USER=Admin >> .env
 ### Start network
 
 ```
-docker-compose -f docker-compose.yaml up -d ca.bc-coop.bclan orderer.bclan peer0.bc-coop.bclan cli.bc-coop.bclan
+docker-compose -f docker-compose.yaml up -d ca.bc-coop.bclan orderer.bclan peer0.bc-coop.bclan couchdb0.bc-coop.bclan cli.bc-coop.bclan
 ```
 
 ### Use the CLI container environment
